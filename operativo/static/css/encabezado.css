@@ -1,0 +1,41 @@
+/* ============================ */
+/* Estilos para encabezado.html */
+/* ============================ */
+
+/* Reset mínimo */
+.encabezado, .encabezado h1, .encabezado p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Colores */
+:root {
+    --verde: #4CAF50;
+    --gris-medio: #555555;
+    --blanco: #ffffff;
+}
+
+/* Contenedor encabezado */
+.encabezado {
+    background-color: var(--blanco);
+    border-left: 5px solid var(--verde);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 6px;
+}
+
+/* Título */
+.encabezado h1 {
+    font-size: 1.8rem;
+    color: var(--verde);
+    margin-bottom: 12px;
+}
+
+/* Texto descriptivo */
+.encabezado p {
+    font-size: 0.95rem;
+    color: var(--gris-medio);
+    margin: 4px 0;
+}

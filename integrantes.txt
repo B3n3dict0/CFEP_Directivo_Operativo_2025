@@ -1,0 +1,55 @@
+ <select id="integrantesSelect">
+  <option value="SUPERINTENDENTE GENERAL">
+    Ing. Sergio Rafael Gonzalez López - Superintendente General E.F.
+  </option>
+  <option value="SUPERINTENDENTE DE PRODUCCIÓN">
+    Ing. Carlos Manuel Gutierrez Cardozo - Superintendente de Producción E.F.
+  </option>
+  <option value="SUPERINTENDENTE DE MANTENIMIENTO">
+    Ing. Héctor Javier Durán Novelo - Superintendente de Mantenimiento E.F.
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Ing. Francisco Jose Lara Moreno - Jefe Depto. Mecánico E.F.
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Ing. Keith Andrés Carama Loría - Jefe Depto. Eléctrico
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Ing. Jose Ahmed Cazares Baeza - Jefe Depto. Instrumentación y Control
+  </option>
+  <option value="ADMINISTRADOR">
+    Lic. Henry Manuel Mendez Contreras - Jefe Depto. Programación y Control E.F.
+  </option>
+  <option value="SUPERVISORES">
+    Ing. Reynaldo Ordaz Santiago - Supervisor Civil
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Ing. Suemy Reyes García - Jefe Depto. Químico
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Joaquín Gustavo Valerio Flores - Jefe Depto. Capacitación y Seguridad E.F.
+  </option>
+  <option value="JEFES DE DEPARTAMENTOS">
+    Nelly del Carmen Martínez Perez - Supervisor Ambiental E.F.
+  </option>
+  <option value="SUPERVISORES">
+    Arq. Elías Delgadillo Vallejo - Supervisor Civil
+  </option>
+  <option value="SUPERINTENDENTE DE TURNO">
+    Ing. Héctor Alejandro Ramos Perez - Supervisor de Operación E.F.
+  </option>
+  <option value="JEFES OFICINA">
+    Lic. Alexis Cruz Novelo - Depto. de Programación y Control
+  </option>
+  <option value="SUPERVISORES">
+    Juan Trinidad Osorno Carrillo - Supervisor Eléctrico E.F.
+  </option>
+  <option value="SUPERVISORES">
+    Gilberto Adrián Moo Coral - Supervisor Eléctrico E.F.
+  </option>
+  <option value="SUPERVISORES">
+    Sergio Uscanga Morales - Supervisor de Instrumentación y Control E.F.
+  </option>
+  <option value="SUPERVISORES">
+    Jesus Antonio Aguilar Carrillo - Supervisor de Instrumentación y Control E.F.
+  </option>

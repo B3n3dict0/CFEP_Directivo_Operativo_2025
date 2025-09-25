@@ -1,0 +1,43 @@
+<h2>Seleccionar integrantes</h2>
+
+<!-- Buscador -->
+<form method="get">
+    <input type="text" name="q" placeholder="Buscar integrante..." value="{{ request.GET.q }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<!-- Lista de integrantes con selección múltiple -->
+<form id="seleccionForm">
+    <select id="integrantesSelect" multiple size="10">
+        {% for integrante in integrantes %}
+            <option value="{{ integrante.id }}">
+                {{ integrante.nombre_completo }} - {{ integrante.puesto }} ({{ integrante.area.nombre }})
+            </option>
+        {% empty %}
+            <option disabled>No hay integrantes disponibles</option>
+        {% endfor %}
+    </select>
+    <br>
+    <button type="button" id="agregarSeleccionados">Agregar a seleccionados</button>
+</form>
+
+<!-- Formulario para agregar un integrante -->
+<h3>Agregar integrante</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="agregar_integrante">Agregar</button>
+</form>
+
+<!-- Lista de integrantes seleccionados -->
+<h3>Integrantes seleccionados</h3>
+<ul id="listaSeleccionados">
+    {% for integrante in seleccionados %}
+        <li data-id="{{ integrante.id }}">
+            {{ integrante.nombre_completo }} - {{ integrante.puesto }} 
+            <button class="eliminarBtn" type="button">Eliminar</button>
+        </li>
+    {% empty %}
+        <li>No hay integrantes seleccionados.</li>
+    {% endfor %}
+</ul>

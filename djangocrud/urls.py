@@ -14,19 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from tasks import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('admin/', admin.site.urls),
-    path('signup/', views.signup, name='signup'),
-    path('tasks/', views.tasks, name='tasks'),
-    path('tasks_completed/', views.tasks_completed, name='tasks_completed'),
-    path('logout/', views.signout, name='logout'),
     path('signin/', views.signin, name='signin'),
-    path('create_task/', views.create_task, name='create_task'),
-    path('tasks/<int:task_id>', views.task_detail, name='task_detail'),
-    path('taks/<int:task_id>/complete', views.complete_task, name='complete_task'),
-    path('tasks/<int:task_id>/delete', views.delete_task, name='delete_task'),
+    path('logout/', views.signout, name='logout'),
+    path('signup/', views.signup, name='signup'),  # si quieres que solo admin cree usuarios, lo puedes proteger en la vista
+    path('admin/', admin.site.urls),
+
+    # Todas las rutas de tareas (CRUD)
+    path('tasks/', include('tasks.urls')),
+
+    # Menú de usuarios
+    path('usuarios/', include('usuarios.urls')),  
 ]

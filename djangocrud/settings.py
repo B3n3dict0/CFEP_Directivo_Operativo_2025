@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tasks',
+    'usuarios',
+    'operativo',
+    'directivo'
 ]
 
 MIDDLEWARE = [
@@ -77,7 +80,7 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cfcp',
+        'NAME': 'cfe',
         'USER': 'postgres',
         'PASSWORD': 'Cfcp2025*$/',
         'HOST': 'localhost',

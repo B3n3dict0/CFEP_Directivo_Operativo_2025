@@ -1,0 +1,76 @@
+/* ============================ */
+/* Estilos para desarrollo.html */
+/* ============================ */
+
+/* Reset mínimo */
+.desarrollo, .desarrollo h2, .desarrollo h3, .desarrollo p, .desarrollo ul, .desarrollo li, .desarrollo a {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-decoration: none;
+}
+
+/* Colores */
+:root {
+    --gris-medio: #555555;
+    --blanco: #ffffff;
+    --rojo-marron: #8B0000;
+    --verde: #4CAF50;
+}
+
+/* Contenedor desarrollo */
+.desarrollo {
+    background-color: var(--blanco);
+    border-left: 5px solid var(--rojo-marron);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+/* Título principal */
+.desarrollo h2 {
+    color: var(--rojo-marron);
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
+
+/* Subtítulos */
+.desarrollo h3 {
+    color: var(--verde);
+    font-size: 1.1rem;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+/* Párrafos */
+.desarrollo p {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Listas */
+.desarrollo ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.desarrollo li {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+/* Enlaces */
+.desarrollo a {
+    color: var(--rojo-marron);
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.desarrollo a:hover {
+    text-decoration: underline;
+}

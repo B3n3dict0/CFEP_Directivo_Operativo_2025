@@ -1,0 +1,46 @@
+<!-- 
+    templates/
+└── operativo/
+    ├── static/
+    ├── base.html
+    └── partials/
+        ├── encabezado.html
+        ├── informacion.html
+        ├── integrantes.html
+        └── desarrollo.html
+    -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Agenda Reunión{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/encabezado.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/informacion.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/integrantes.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/desarrollo.css' %}" />
+</head>
+<body>
+
+    {% block encabezado %}
+        {% include "operativo/partials/encabezado.html" %}
+    {% endblock %}
+
+    {% block informacion %}
+        {% include "operativo/partials/informacion.html" %}
+    {% endblock %}
+
+    {% block integrantes %}
+        {% include "operativo/partials/integrantes.html" %}
+    {% endblock %}
+
+    {% block desarrollo %}
+        {% include "operativo/partials/desarrollo.html" %}
+    {% endblock %}
+
+    <!-- Enlace al JS -->
+    <script src="{% static 'js/integrantes.js' %}"></script>
+
+</body>
+</html>

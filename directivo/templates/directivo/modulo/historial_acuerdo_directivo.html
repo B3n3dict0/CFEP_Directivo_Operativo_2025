@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Acuerdos Directivos</title>
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+</head>
+<body>
+
+<div class="historial-container">
+    <h2>Historial de Acuerdos Directivos</h2>
+
+    <!-- Filtros opcionales -->
+    <div class="historial-filters">
+        <input type="text" placeholder="Buscar por responsable">
+        <select>
+            <option value="">Todos los tipos</option>
+            <option value="tipo1">Tipo 1</option>
+            <option value="tipo2">Tipo 2</option>
+        </select>
+    </div>
+
+    <!-- Tabla -->
+    <table class="historial-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tipo Unidad</th>
+                <th>Acuerdo</th>
+                <th>Unidad Parada</th>
+                <th>Fecha Límite</th>
+                <th>Pendiente</th>
+                <th>Responsable</th>
+                <th>Responsable Manual</th>
+                <th>% Avance</th>
+                <th>Creado En</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if acuerdos %}
+                {% for a in acuerdos %}
+                <tr>
+                    <td>{{ a.numerador }}</td>
+                    <td>{{ a.tipo_unidad }}</td>
+                    <td>{{ a.descripcion }}</td>
+                    <td>{{ a.unidad_parada|yesno:"Sí,No" }}</td>
+                    <td>{{ a.fecha_limite }}</td>
+                    <td>{{ a.pendiente|yesno:"Sí,No" }}</td>
+                    <td>{{ a.responsable }}</td>
+                    <td>{{ a.responsable_manual }}</td>
+                    <td class="
+                        {% if a.porcentaje_avance == 100 %}
+                            avance-verde-total
+                        {% elif a.porcentaje_avance >= 80 %}
+                            avance-amarillo
+                        {% else %}
+                            avance-rojo
+                        {% endif %}
+                    ">
+                        {{ a.porcentaje_avance }}%
+                    </td>
+                    <td>{{ a.creado_en|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10">No hay acuerdos guardados.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <!-- Información adicional -->
+    <div class="historial-info">
+        <span>Total registros: {{ acuerdos|length }}</span>
+        <span>Última actualización: {{ last_update }}</span>
+    </div>
+</div>
+
+</body>
+</html>

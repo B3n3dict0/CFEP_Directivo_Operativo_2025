@@ -6,29 +6,34 @@ from django.db import IntegrityError
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Task
-
 from .forms import TaskForm
+from django.contrib.auth.decorators import user_passes_test
 
 # Create your views here.
-
-
+# Solo superusuarios o staff pueden acceder
+@user_passes_test(lambda u: u.is_superuser or u.is_staff)
 def signup(request):
     if request.method == 'GET':
         return render(request, 'signup.html', {"form": UserCreationForm})
     else:
-
         if request.POST["password1"] == request.POST["password2"]:
             try:
                 user = User.objects.create_user(
                     request.POST["username"], password=request.POST["password1"])
                 user.save()
-                login(request, user)
-                return redirect('tasks')
+                return redirect('tasks')  # Redirige a donde quieras después de crear el usuario
             except IntegrityError:
-                return render(request, 'signup.html', {"form": UserCreationForm, "error": "Username already exists."})
-
-        return render(request, 'signup.html', {"form": UserCreationForm, "error": "Passwords did not match."})
-
+                return render(
+                    request,
+                    'signup.html',
+                    {"form": UserCreationForm, "error": "Username already exists."}
+                )
+        else:
+            return render(
+                request,
+                'signup.html',
+                {"form": UserCreationForm, "error": "Passwords did not match."}
+            )
 
 @login_required
 def tasks(request):
@@ -69,15 +74,38 @@ def signout(request):
 def signin(request):
     if request.method == 'GET':
         return render(request, 'signin.html', {"form": AuthenticationForm})
-    else:
-        user = authenticate(
-            request, username=request.POST['username'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'signin.html', {"form": AuthenticationForm, "error": "Username or password is incorrect."})
+    
+    user = authenticate(
+        request, username=request.POST['username'], password=request.POST['password']
+    )
+    
+    if user is None:
+        return render(request, 'signin.html', {
+            "form": AuthenticationForm, 
+            "error": "Usuario o contraseña incorrectos."
+        })
 
-        login(request, user)
-        return redirect('tasks')
+    login(request, user)
 
+    # Admin → dashboard en tasks/base.html
+    if user.is_superuser or user.is_staff:
+        return redirect('admin_dashboard')
+
+    # Usuario normal → menú principal
+    return redirect('menu_usuario')
+
+@login_required
+def admin_dashboard(request):
+    return render(request, 'base.html')
+
+# menu usuario
+@login_required
+def menu_usuario(request):
+    return render(request, 'usuarios/menu.html')
+
+
+
+# No mover por el momento este apartado ####################
 @login_required
 def task_detail(request, task_id):
     if request.method == 'GET':
@@ -107,3 +135,4 @@ def delete_task(request, task_id):
     if request.method == 'POST':
         task.delete()
         return redirect('tasks')
+    ##############################################################################################

@@ -1,0 +1,46 @@
+/* ============================ */
+/* Estilos para integrantes.html */
+/* ============================ */
+
+/* Reset mínimo */
+.integrantes, .integrantes h2, .integrantes ul, .integrantes li {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Colores */
+:root {
+    --verde: #4CAF50;
+    --gris-medio: #555555;
+    --blanco: #ffffff;
+}
+
+/* Contenedor integrantes */
+.integrantes {
+    background-color: var(--blanco);
+    border-left: 5px solid var(--verde);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+/* Subtítulo */
+.integrantes h2 {
+    color: var(--verde);
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+
+/* Lista de integrantes */
+.integrantes ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.integrantes li {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}

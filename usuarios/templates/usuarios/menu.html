@@ -1,0 +1,24 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<!-- ...existing code... -->
+{% block content %}
+<div class="menu-container">
+    <h2>Menú principal</h2>
+    <div class="welcome-message">
+        <p>Bienvenido, <strong>{{ request.user.username }}</strong></p>
+    </div>
+    
+    <ul class="menu-list">
+        <li class="menu-item">
+            <a href="{% url 'directivo_index' %}" class="menu-link">Directivo</a>
+        </li>
+        <li class="menu-item">
+            <a href="{% url 'operativo_index' %}" class="menu-link">Operativo</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
+
+
+

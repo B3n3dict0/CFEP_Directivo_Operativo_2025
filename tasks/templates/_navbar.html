@@ -17,28 +17,31 @@
         <li class="nav-item">
           <a href="/" class="nav-link">Home</a>
         </li>
+
         {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a href="{% url 'tasks_completed' %}" class="nav-link"
-            >complted tasks</a
-          >
-        </li>
-        <li class="nav-item">
-          <a href="{% url 'tasks' %}" class="nav-link">Tasks</a>
-        </li>
-        <li class="nav-item">
-          <a href="{% url 'create_task' %}" class="nav-link">Create Task</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Logout</a>
-        </li>
+          <li class="nav-item">
+            <a href="{% url 'tasks_completed' %}" class="nav-link">Completed Tasks</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'tasks' %}" class="nav-link">Tasks</a>
+          </li>
+
+          {% if user.is_superuser or user.is_staff %}
+          <li class="nav-item">
+            <a href="{% url 'signup' %}" class="nav-link">Create User</a>
+          </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a href="{% url 'create_task' %}" class="nav-link">Create Task</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
         {% else %}
-        <li class="nav-item">
-          <a href="/signin" class="nav-link">Login</a>
-        </li>
-        <li class="nav-item">
-          <a href="/signup" class="nav-link">Register</a>
-        </li>
+          <li class="nav-item">
+            <a href="{% url 'signin' %}" class="nav-link">Login</a>
+          </li>
         {% endif %}
       </ul>
     </div>
