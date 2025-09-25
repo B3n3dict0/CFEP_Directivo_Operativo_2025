@@ -1,78 +1,42 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Historial de Acuerdos Operativos</title>
-    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
-</head>
-<body>
+<h1>Historial de Acuerdos Operativos</h1>
 
-<div class="historial-container">
-    <h2>Historial de Acuerdos Operativos</h2>
+<!-- Buscador -->
+<form method="get">
+  <input type="text" name="q" placeholder="Buscar por acuerdo, numerador o responsable" value="{{ query|default:'' }}">
+  <button type="submit">Buscar</button>
+</form>
 
-    <!-- Filtros opcionales -->
-    <div class="historial-filters">
-        <input type="text" placeholder="Buscar por responsable">
-        <select>
-            <option value="">Todos los tipos</option>
-            <option value="tipo1">Tipo 1</option>
-            <option value="tipo2">Tipo 2</option>
-        </select>
-    </div>
-
-    <!-- Tabla -->
-    <table class="historial-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Tipo Unidad</th>
-                <th>Acuerdo</th>
-                <th>Unidad Parada</th>
-                <th>Fecha Límite</th>
-                <th>Pendiente</th>
-                <th>Responsable</th>
-                <th>% Avance</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if acuerdos %}
-                {% for a in acuerdos %}
-                <tr>
-                    <td>{{ a.numerador }}</td>
-                    <td>{{ a.tipo_unidad }}</td>
-                    <td>{{ a.descripcion }}</td>
-                    <td>{{ a.unidad_parada|yesno:"Sí,No" }}</td>
-                    <td>{{ a.fecha_limite }}</td>
-                    <td>{{ a.pendiente|yesno:"Sí,No" }}</td>
-                    <td>{{ a.responsable }}</td>
-                    <td class="
-                        {% if a.porcentaje_avance == 100 %}
-                            avance-verde-total
-                        {% elif a.porcentaje_avance >= 80 %}
-                            avance-amarillo
-                        {% else %}
-                            avance-rojo
-                        {% endif %}
-                    ">
-                        {{ a.porcentaje_avance }}%
-                    </td>
-                </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="8">No hay acuerdos guardados.</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <!-- Información adicional -->
-    <div class="historial-info">
-        <span>Total registros: {{ acuerdos|length }}</span>
-        <span>Última actualización: {{ last_update }}</span>
-    </div>
-</div>
-
-</body>
-</html>
+<table border="1" cellspacing="0" cellpadding="5">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Unidad</th>
+      <th>Acuerdo</th>
+      <th>Unidad Parada</th>
+      <th>Fecha Límite</th>
+      <th>Pendiente</th>
+      <th>Responsable</th>
+      <th>% Avance</th>
+      <th>Fecha Creación</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for acuerdo in acuerdos %}
+      <tr>
+        <td>{{ acuerdo.numerador }}</td>
+        <td>{{ acuerdo.unidad }}</td>
+        <td>{{ acuerdo.acuerdo }}</td>
+        <td>{{ acuerdo.unidad_parada|yesno:"Sí,No" }}</td>
+        <td>{{ acuerdo.fecha_limite }}</td>
+        <td>{{ acuerdo.pendiente|yesno:"Sí,No" }}</td>
+        <td>{{ acuerdo.responsable.nombre_completo }}</td>
+        <td>{{ acuerdo.porcentaje_avance }}%</td>
+        <td>{{ acuerdo.fecha_creacion|date:"Y-m-d H:i" }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="9">No hay acuerdos registrados.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

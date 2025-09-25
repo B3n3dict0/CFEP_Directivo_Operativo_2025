@@ -1,51 +1,4 @@
-<form method="post">
-  {% csrf_token %}
-  <table id="tabla-acuerdos">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Unidad</th>
-        <th>Acuerdo</th>
-        <th>Unidad Parada</th>
-        <th>Fecha Límite</th>
-        <th>Pendiente</th>
-        <th>Responsable</th>
-        <th>% Avance</th>
-        <th>Agregar</th>
-        <th>Eliminar</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><input type="number" name="numerador" value="1" min="1" required></td>
-        <td>
-          <select name="unidad" required>
-            {% for i in unidades %}
-              <option value="{{ i }}">{{ i }}</option>
-            {% endfor %}
-          </select>
-        </td>
-        <td><input type="text" name="acuerdo" required></td>
-        <td><input type="checkbox" name="unidad_parada"></td>
-        <td><input type="date" name="fecha_limite" value="{{ fecha_actual|date:'Y-m-d' }}" required></td>
-        <td><input type="checkbox" name="pendiente" checked></td>
-        <td>
-          <select name="responsable" required>
-            {% for integrante in integrantes %}
-              <option value="{{ integrante.id }}">{{ integrante.nombre_completo }} - {{ integrante.puesto }}</option>
-            {% endfor %}
-          </select>
-        </td>
-        <td><input type="number" name="porcentaje_avance" min="0" max="100" value="0" required></td>
-        <td><button type="button" class="agregar-fila">+</button></td>
-        <td><button type="button" class="eliminar-fila">-</button></td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="submit">Guardar Matriz</button>
-</form>
 
-<script>
 document.addEventListener("DOMContentLoaded", function() {
   const tabla = document.getElementById("tabla-acuerdos").getElementsByTagName('tbody')[0];
   const form = document.querySelector("form");
@@ -93,4 +46,3 @@ document.addEventListener("DOMContentLoaded", function() {
     if (error) e.preventDefault(); // Evita enviar si hay error
   });
 });
-</script>
