@@ -13,29 +13,113 @@
 :root {
     --verde: #4CAF50;
     --gris-medio: #555555;
+    --gris-claro: #f5f5f5;
     --blanco: #ffffff;
+    --rojo: #f44336;
+    --verde-oscuro: #388E3C;
+    --gris-borde: #ddd;
 }
 
 /* Contenedor encabezado */
 .encabezado {
     background-color: var(--blanco);
     border-left: 5px solid var(--verde);
-    padding: 20px 30px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 6px;
+    padding: 25px 35px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    border-radius: 8px;
 }
 
 /* Título */
 .encabezado h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: var(--verde);
     margin-bottom: 12px;
 }
 
 /* Texto descriptivo */
 .encabezado p {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--gris-medio);
-    margin: 4px 0;
+    margin: 6px 0;
+}
+
+/* ============================ */
+/* Estilos para cronómetro */
+/* ============================ */
+
+#cronometro-section {
+    background-color: var(--gris-claro);
+    padding: 25px 30px;
+    border-radius: 8px;
+    margin-top: 25px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+#cronometro-section:hover {
+    transform: translateY(-3px);
+}
+
+#cronometro-section h2 {
+    font-size: 1.6rem;
+    color: var(--verde-oscuro);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+#cronometro-section p {
+    font-size: 1.4rem;
+    color: var(--gris-medio);
+    margin-bottom: 25px;
+}
+
+#cronometro {
+    font-weight: bold;
+    font-size: 2.5rem;
+    color: var(--rojo);
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: #fff0f0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+/* Botones */
+.botones-cronometro {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.botones-cronometro button {
+    padding: 10px 22px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--blanco);
+    background-color: var(--verde);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.botones-cronometro button:hover {
+    background-color: var(--verde-oscuro);
+    transform: translateY(-2px);
+}
+
+.botones-cronometro button:active {
+    transform: scale(0.97);
+}
+
+#btnCancelar {
+    background-color: var(--rojo);
+}
+
+#btnCancelar:hover {
+    background-color: #e53935;
 }

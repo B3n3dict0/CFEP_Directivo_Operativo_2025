@@ -2,12 +2,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById("integrantesSelect");
     const lista = document.getElementById("listaSeleccionados");
     const botonAgregar = document.getElementById("agregarSeleccionados");
+    const mensajeVacio = document.getElementById("mensajeVacio");
 
     // Almacena los seleccionados para evitar duplicados
     const seleccionadosSet = new Set();
     lista.querySelectorAll("li").forEach(li => {
         if (li.dataset.id) seleccionadosSet.add(li.dataset.id);
     });
+
+    // Mostrar/ocultar mensaje vacío
+    function actualizarMensaje() {
+        if (lista.querySelectorAll("li[data-id]").length === 0) {
+            mensajeVacio.style.display = "block";
+        } else {
+            mensajeVacio.style.display = "none";
+        }
+    }
+
+    actualizarMensaje();
 
     // Agregar seleccionados
     botonAgregar.addEventListener("click", function () {
@@ -23,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 lista.appendChild(li);
             }
         });
+        actualizarMensaje();
     });
 
     // Delegación de eventos para eliminar
@@ -31,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const li = e.target.parentElement;
             seleccionadosSet.delete(li.dataset.id);
             li.remove();
+            actualizarMensaje();
         }
     });
 });

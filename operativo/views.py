@@ -36,3 +36,7 @@ def operativo_view(request):
         'seleccionados': seleccionados,
         'fecha_actual': timezone.now(),
     })
+    
+
+def crear_acuerdo_operativo(request):
+    return render(request, 'modulo/crear_acuerdo_operativo.html')
