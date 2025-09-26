@@ -1,0 +1,187 @@
+/* ============================ */
+/* Estilos para desarrollo.html */
+/* ============================ */
+
+/* Reset mínimo */
+.desarrollo, .desarrollo h2, .desarrollo h3, .desarrollo p, .desarrollo ul, .desarrollo li, .desarrollo a {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-decoration: none;
+}
+
+/* Colores */
+:root {
+    --gris-medio: #555555;
+    --blanco: #ffffff;
+    --rojo-marron: #8B0000;
+    --verde: #4CAF50;
+}
+
+/* Contenedor desarrollo */
+.desarrollo {
+    background-color: var(--blanco);
+    border-left: 5px solid var(--rojo-marron);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+/* Título principal */
+.desarrollo h2 {
+    color: var(--rojo-marron);
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
+
+/* Subtítulos */
+.desarrollo h3 {
+    color: var(--verde);
+    font-size: 1.1rem;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+/* Párrafos */
+.desarrollo p {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Listas */
+.desarrollo ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.desarrollo li {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+/* Enlaces */
+.desarrollo a {
+    color: var(--rojo-marron);
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.desarrollo a:hover {
+    text-decoration: underline;
+}
+
+
+/* ============================ */
+/* Estilos para formulario de notas */
+/* ============================ */
+
+/* Fondo de overlay */
+#overlay-nota {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    z-index: 999; /* Encima de todo */
+}
+
+/* Contenedor modal */
+#formulario-nota {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px 25px;
+    border-radius: 8px;
+    border: 2px solid #8B0000;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    z-index: 1000;
+    width: 90%;
+    max-width: 500px;
+}
+
+/* Título del modal */
+#formulario-nota h4 {
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    color: #8B0000;
+    text-align: center;
+}
+
+/* Textarea de la nota */
+#formulario-nota textarea {
+    width: 100%;
+    font-size: 0.95rem;
+    padding: 8px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+/* Botones del modal */
+#formulario-nota .btn {
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background-color 0.2s ease;
+}
+
+#formulario-nota .btn-guardar {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+#formulario-nota .btn-guardar:hover {
+    background-color: #45a049;
+}
+
+#formulario-nota .btn-cerrar {
+    background-color: #8B0000;
+    color: #fff;
+}
+
+#formulario-nota .btn-cerrar:hover {
+    background-color: #700000;
+}
+
+/* Sección de notas guardadas */
+.nota-item {
+    background-color: #f9f9f9;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-left: 4px solid #4CAF50;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Botón de editar dentro de la nota */
+.nota-item .btn-editar {
+    background-color: #008CBA;
+    color: white;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.nota-item .btn-editar:hover {
+    background-color: #006f94;
+}

@@ -1,0 +1,88 @@
+/* Contenedor principal del menú */
+.menu-container {
+    width: 250px;
+    background-color: #374151; /* gris oscuro */
+    color: #ffffff; /* blanco para texto */
+    min-height: 100vh;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título del menú */
+.menu-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    color: #10b981; /* verde */
+}
+
+/* Mensaje de bienvenida */
+.welcome-message {
+    background-color: #6b7280; /* gris medio */
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff; /* blanco */
+}
+
+.welcome-message p {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* Lista de elementos del menú */
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    margin-bottom: 10px;
+}
+
+.menu-link {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #ffffff; /* blanco */
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1rem;
+    background-color: #10b981; /* verde */
+    cursor: pointer;
+}
+
+/* Hover efecto */
+.menu-link:hover {
+    background-color: #991b1b; /* rojo-moreno */
+}
+
+/* Activo */
+.menu-item.active .menu-link {
+    background-color: #991b1b; /* rojo-moreno */
+}
+
+/* Logout Button */
+.logout-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.logout-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #991b1b; /* rojo-moreno */
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.logout-link:hover {
+    background-color: #ff4d4d; /* rojo más claro al pasar mouse */
+}

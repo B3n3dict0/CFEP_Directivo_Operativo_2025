@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnReiniciar = document.getElementById("btnReiniciar");
     const btnCancelar = document.getElementById("btnCancelar");
 
-    let tiempoInicial = 15 * 60; // 32 minutos en segundos
+    let tiempoInicial = 32 * 60; // 32 minutos en segundos
     let tiempoRestante = tiempoInicial;
     let intervalo = null;
 

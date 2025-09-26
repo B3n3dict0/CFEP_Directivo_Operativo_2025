@@ -1,0 +1,50 @@
+<!-- 
+    templates/
+└── operativo/
+    ├── static/
+    ├── base.html
+    └── partials/
+        ├── encabezado.html
+        ├── informacion.html
+        ├── integrantes.html
+        └── desarrollo.html
+    -->
+
+    {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Agenda Reunión{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/encabezado.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/informacion.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/integrantes.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/desarrollo.css' %}" />
+</head>
+<body>
+
+    {% block encabezado %}
+        {% include "directivo/partials/encabezado.html" %}
+    {% endblock %}
+
+    {% block informacion %}
+        {% include "directivo/partials/informacion.html" %}
+    {% endblock %}
+
+    {% block integrantes %}
+        {% include "directivo/partials/integrantes.html" %}
+    {% endblock %}
+
+    {% block desarrollo %}
+        {% include "directivo/partials/desarrollo.html" %}
+    {% endblock %}
+
+
+    <!-- Enlace al JS -->
+    <script src="{% static 'js/integrantes_directivo.js' %}"></script>
+    <script src="{% static 'js/cronometro_directivo.js' %}"></script>
+    <script src="{% static 'js/crear_acuerdo_directivo.js' %}"></script>
+    <script src="{% static 'js/notas_directivo.js' %}"></script>
+</body>
+</html>

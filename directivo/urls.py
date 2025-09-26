@@ -1,11 +1,13 @@
-# urls.py
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
+    path('', views.directivo_view, name='directivo_index'),
+    path('crear-acuerdo/', views.crear_acuerdo_directivo, name='crear_acuerdo_directivo'),
+    path('historial-acuerdos/', views.historial_acuerdos, name='historial_acuerdos'),
+    path('exportar-pdf/', views.exportar_pdf, name='exportar_pdf'),
 
-    # Acuerdos directivo
-    path('', views.directivo_view, name='directivo_index'),  # para /usuarios/directivo/
-
+    # Notas
+    path('editar/<int:nota_id>/', views.editar_nota, name='editar_nota'),
+    path('guardar-todo/', views.guardar_todo, name='guardar_todo'),
 ]

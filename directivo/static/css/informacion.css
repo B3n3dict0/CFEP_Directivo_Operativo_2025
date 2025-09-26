@@ -1,0 +1,42 @@
+/* ============================ */
+/* Estilos para informacion.html */
+/* ============================ */
+
+/* Reset mínimo */
+.informacion, .informacion h2, .informacion p {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Colores */
+:root {
+    --rojo-marron: #8B0000;
+    --gris-medio: #555555;
+    --blanco: #ffffff;
+}
+
+/* Contenedor información */
+.informacion {
+    background-color: var(--blanco);
+    border-left: 5px solid var(--rojo-marron);
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+/* Subtítulos */
+.informacion h2 {
+    color: var(--rojo-marron);
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+/* Párrafos */
+.informacion p {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}

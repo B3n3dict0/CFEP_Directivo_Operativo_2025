@@ -1,0 +1,131 @@
+{% load static %}
+
+<section class="desarrollo">
+  <h2>INFORMACIÓN</h2>
+
+  <!-- 1. PRODUCCIÓN -->
+  <h3>1. PRODUCCIÓN (5 MINUTOS)</h3>
+  <button onclick="mostrarFormulario('produccion')">Agregar Nota</button>
+  <div id="notas-produccion">
+    {% for nota in notas %}
+      {% if nota.apartado == 'produccion' %}
+        <div class="nota-item">
+          <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div id="notas-temporales-produccion"></div>
+  </div>
+  <ul>
+    <li>Presentación de problemática y solución</li>
+    <li>Control de licencias emitidas</li>
+  </ul>
+
+  <!-- 2. MANTENIMIENTO -->
+  <h3>2. MANTENIMIENTO (5 MINUTOS)</h3>
+  <button onclick="mostrarFormulario('mantenimiento')">Agregar Nota</button>
+  <div id="notas-mantenimiento">
+    {% for nota in notas %}
+      {% if nota.apartado == 'mantenimiento' %}
+        <div class="nota-item">
+          <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div id="notas-temporales-mantenimiento"></div>
+  </div>
+  <ul>
+    <li>Presentación de problemática y solución</li>
+    <li>Control de paquetes, tablero de control, curva de avances</li>
+  </ul>
+
+  <!-- 3. GESTIÓN DE RECURSOS -->
+  <h3>3. GESTIÓN DE RECURSOS (4 MINUTOS)</h3>
+  <button onclick="mostrarFormulario('gestion')">Agregar Nota</button>
+  <div id="notas-gestion">
+    {% for nota in notas %}
+      {% if nota.apartado == 'gestion' %}
+        <div class="nota-item">
+          <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div id="notas-temporales-gestion"></div>
+  </div>
+  <ul>
+    <li>Presentación de problemática y solución recursos humanos</li>
+    <li>Presentación de problemática y solución recursos materiales y servicios</li>
+    <li>Presentación de problemática y solución recursos financieros</li>
+  </ul>
+
+  <!-- 4. SEGURIDAD, AMBIENTAL Y CALIDAD -->
+  <h3>4. SEGURIDAD, AMBIENTAL Y CALIDAD (3 MINUTOS)</h3>
+  <button onclick="mostrarFormulario('seguridad')">Agregar Nota</button>
+  <div id="notas-seguridad">
+    {% for nota in notas %}
+      {% if nota.apartado == 'seguridad' %}
+        <div class="nota-item">
+          <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div id="notas-temporales-seguridad"></div>
+  </div>
+
+  <!-- 5. REVISIÓN DE ACUERDOS ANTERIORES -->
+  <h3>5. REVISIÓN DE ACUERDOS ANTERIORES (5 MINUTOS)</h3>
+  <a href="{% url 'historial_acuerdos' %}">Ir a página</a>
+
+  <!-- 6. CREACIÓN DE ACUERDOS NUEVOS -->
+  <h3>6. CREACIÓN DE ACUERDOS NUEVOS (8 MINUTOS)</h3>
+  <a href="{% url 'crear_acuerdo_directivo' %}" target="_blank">Ir a página</a>
+
+  <!-- 7. SUPERINTENDENTE GENERAL -->
+  <h3>7. SUPERINTENDENTE GENERAL (2 MINUTOS)</h3>
+  <button onclick="mostrarFormulario('superintendencia')">Agregar Nota</button>
+  <div id="notas-superintendencia">
+    {% for nota in notas %}
+      {% if nota.apartado == 'superintendencia' %}
+        <div class="nota-item">
+          <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div id="notas-temporales-superintendencia"></div>
+  </div>
+  <p>Ratificación de las actividades relevantes</p>
+</section>
+
+<!-- Overlay para modal -->
+<div id="overlay-nota"></div>
+
+<!-- Formulario modal -->
+<div id="formulario-nota">
+  <h4>Agregar Nota</h4>
+  <form id="form-temporal" onsubmit="return agregarNotaTemporal();">
+    <input type="hidden" id="id_apartado" name="apartado">
+    <textarea id="texto_nota" rows="4" placeholder="Escribe tu nota aquí..."></textarea>
+    <div style="text-align: right; margin-top: 10px;">
+      <button type="submit" class="btn btn-guardar">Guardar</button>
+      <button type="button" class="btn btn-cerrar" onclick="cerrarFormulario()">Cerrar</button>
+    </div>
+  </form>
+</div>
+
+<!-- Botón general -->
+<hr>
+<form id="guardar-todo-form">
+  <button type="submit">Guardar Todo</button>
+</form>
+
+<section>
+  <form method="post">
+     {% csrf_token %}
+     <button type="submit" name="descargar_pdf">📥 Descargar PDF</button>
+  </form>
+</section>
