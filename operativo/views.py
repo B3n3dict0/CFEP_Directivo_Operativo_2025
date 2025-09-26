@@ -79,7 +79,7 @@ def crear_acuerdo_operativo(request):
     return render(request, 'modulo/crear_acuerdo_operativo.html')
 
 def historial_acuerdos(request):
-    return render(request, 'modulo/historial_acuerdos.html')
+    return render(request, 'modulo/historial_acuerdo_operativa.html')
 
 
 #logica de crear acuerdo 
@@ -116,7 +116,7 @@ def crear_acuerdo_operativo(request):
         'unidades': unidades
     })
     
-def historial_acuerdos(request):
+def historial_acuerdo_operativo(request):
     # Consultar todos los acuerdos, ordenados por fecha de creación
     acuerdos = AcuerdoOperativo.objects.all().order_by('-fecha_creacion')
 

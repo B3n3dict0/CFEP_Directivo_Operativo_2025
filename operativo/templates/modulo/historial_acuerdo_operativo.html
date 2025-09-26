@@ -1,11 +1,60 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <title>Historial de Acuerdos Operativos</title>
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
 </head>
 <body>
-  <h1>HISTORIAL DE ACUERDOS OPERATIVOS</h1>
+    <h1>Historial de Acuerdos Operativos</h1>
+
+    <!-- Barra de búsqueda -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Buscar..." value="{{ query }}">
+        <button type="submit">Buscar</button>
+        {% if query %}
+            <a href="{% url 'historial_acuerdo_operativo' %}">Limpiar</a>
+        {% endif %}
+    </form>
+
+    <!-- Tabla de resultados -->
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Unidad</th>
+                <th>Acuerdo</th>
+                <th>Unidad Parada</th>
+                <th>Fecha Límite</th>
+                <th>Pendiente</th>
+                <th>Responsable</th>
+                <th>Avance (%)</th>
+                <th>Fecha de Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acuerdo in acuerdos %}
+                <tr>
+                    <td>{{ acuerdo.numerador }}</td>
+                    <td>{{ acuerdo.unidad }}</td>
+                    <td>{{ acuerdo.acuerdo }}</td>
+                    <td>{% if acuerdo.unidad_parada %} Sí {% else %} No {% endif %}</td>
+                    <td>{{ acuerdo.fecha_limite|date:"d/m/Y" }}</td>
+                    <td>{% if acuerdo.pendiente %} Sí {% else %} No {% endif %}</td>
+                    <td>{{ acuerdo.responsable.nombre_completo }}</td>
+                    <td>{{ acuerdo.porcentaje_avance }}%</td>
+                    <td>{{ acuerdo.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9">No hay acuerdos registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{% url 'crear_acuerdo_operativo' %}">← Volver a crear acuerdos</a>
 </body>
 </html>
