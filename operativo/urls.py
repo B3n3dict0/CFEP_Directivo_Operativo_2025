@@ -4,6 +4,10 @@ from . import views
 urlpatterns = [
     path('', views.operativo_view, name='operativo_index'),
     path('crear-acuerdo/', views.crear_acuerdo_operativo, name='crear_acuerdo_operativo'),
-     path('historial-acuerdos/', views.historial_acuerdos, name='historial_acuerdos'),
-
+    path('historial-acuerdos/', views.historial_acuerdos, name='historial_acuerdos'),
+    path('exportar-pdf/', views.exportar_pdf, name='exportar_pdf'),
+    
+    # Rutas nuevas para notas
+    path('editar/<int:nota_id>/', views.editar_nota, name='editar_nota'),
+    path('guardar-todo/', views.guardar_todo, name='guardar_todo'),
 ]

@@ -5,3 +5,7 @@ pycodestyle==2.9.1
 sqlparse==0.4.2
 toml==0.10.2
 psycopg2-binary==2.9.10
+django
+python-docx
+docx2pdf
+reportlab
