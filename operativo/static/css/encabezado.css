@@ -1,5 +1,5 @@
 /* ============================ */
-/* Estilos para encabezado.html */
+/* Estilos optimizados para encabezado.html */
 /* ============================ */
 
 /* Reset mínimo */
@@ -7,6 +7,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
 }
 
 /* Colores */
@@ -18,102 +19,99 @@
     --rojo: #f44336;
     --verde-oscuro: #388E3C;
     --gris-borde: #ddd;
+    --rojo-hover: #e53935;
 }
 
-/* Contenedor encabezado */
+/* Contenedor encabezado - más compacto */
 .encabezado {
     background-color: var(--blanco);
     border-left: 5px solid var(--verde);
-    padding: 25px 35px;
-    margin-bottom: 25px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     border-radius: 8px;
 }
 
-/* Título */
+/* Título más compacto */
 .encabezado h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     color: var(--verde);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    line-height: 1.3;
 }
 
-/* Texto descriptivo */
+/* Texto descriptivo más compacto */
 .encabezado p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--gris-medio);
-    margin: 6px 0;
+    margin: 4px 0;
 }
 
 /* ============================ */
-/* Estilos para cronómetro */
+/* Estilos para cronómetro - optimizado */
 /* ============================ */
 
 #cronometro-section {
     background-color: var(--gris-claro);
-    padding: 25px 30px;
+    padding: 20px;
     border-radius: 8px;
-    margin-top: 25px;
+    margin-top: 20px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease;
-}
-
-#cronometro-section:hover {
-    transform: translateY(-3px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 #cronometro-section h2 {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     color: var(--verde-oscuro);
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-weight: 600;
 }
 
 #cronometro-section p {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     color: var(--gris-medio);
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 #cronometro {
     font-weight: bold;
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: var(--rojo);
     display: inline-block;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
     background-color: #fff0f0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
 }
 
-/* Botones */
+/* Botones más compactos */
 .botones-cronometro {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 .botones-cronometro button {
-    padding: 10px 22px;
-    font-size: 1rem;
+    padding: 8px 16px;
+    font-size: 0.9rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
     color: var(--blanco);
     background-color: var(--verde);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .botones-cronometro button:hover {
     background-color: var(--verde-oscuro);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .botones-cronometro button:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
 }
 
 #btnCancelar {
@@ -121,5 +119,62 @@
 }
 
 #btnCancelar:hover {
-    background-color: #e53935;
+    background-color: var(--rojo-hover);
+}
+
+/* Layout horizontal para pantallas grandes */
+@media (min-width: 768px) {
+    .encabezado {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+    
+    #cronometro-section {
+        margin-top: 0;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .encabezado-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .encabezado h1 {
+        margin-bottom: 8px;
+    }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .encabezado {
+        padding: 15px 20px;
+    }
+    
+    .encabezado h1 {
+        font-size: 1.4rem;
+    }
+    
+    #cronometro-section {
+        padding: 15px;
+    }
+    
+    #cronometro {
+        font-size: 1.8rem;
+        padding: 6px 12px;
+    }
+    
+    .botones-cronometro {
+        gap: 8px;
+    }
+    
+    .botones-cronometro button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
 }

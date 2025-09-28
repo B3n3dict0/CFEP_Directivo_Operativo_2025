@@ -1,53 +1,97 @@
 <div class="integrantes">
-  <h2>Seleccionar integrantes</h2>
+  <h2>Seleccionar Integrantes</h2>
+  
+  <div class="integrantes-grid">
+    <!-- Columna izquierda - Búsqueda y lista -->
+    <div class="columna-izquierda">
+      <!-- Buscador -->
+      <div class="seccion-buscador">
+        <h3>Buscar Integrantes</h3>
+        <form method="get" class="buscador-form">
+          <div class="input-group">
+            <input 
+              type="text" 
+              name="q" 
+              placeholder="Buscar por nombre, puesto o área..." 
+              value="{{ request.GET.q }}" 
+              class="input-text"
+            >
+            <button type="submit" class="btn btn-buscar">
+              <span>🔍</span> Buscar
+            </button>
+          </div>
+        </form>
+      </div>
 
-  <!-- Buscador -->
-  <form method="get" class="buscador-form">
-    <input 
-      type="text" 
-      name="q" 
-      placeholder="Buscar integrante..." 
-      value="{{ request.GET.q }}" 
-      class="input-text"
-    >
-    <button type="submit" class="btn">Buscar</button>
-  </form>
+      <!-- Lista de integrantes -->
+      <div class="seccion-lista">
+        <h3>Lista de Integrantes Disponibles</h3>
+        <form id="seleccionForm" class="seleccion-form">
+          <div class="select-container">
+            <select id="integrantesSelect" multiple size="8" class="select-multiple">
+              {% for integrante in integrantes %}
+                <option value="{{ integrante.id }}">
+                  {{ integrante.nombre_completo }} - {{ integrante.puesto }} ({{ integrante.area.nombre }})
+                </option>
+              {% empty %}
+                <option disabled>No hay integrantes disponibles</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="botones-container">
+            <button type="button" id="agregarSeleccionados" class="btn-secundario">
+              ➕ Agregar Seleccionados
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-  <!-- Lista de integrantes con selección múltiple -->
-  <form id="seleccionForm" class="seleccion-form">
-    <label for="integrantesSelect">Lista de integrantes:</label>
-    <select id="integrantesSelect" multiple size="10" class="select-multiple">
-      {% for integrante in integrantes %}
-        <option value="{{ integrante.id }}">
-          {{ integrante.nombre_completo }} - {{ integrante.puesto }} ({{ integrante.area.nombre }})
-        </option>
-      {% empty %}
-        <option disabled>No hay integrantes disponibles</option>
-      {% endfor %}
-    </select>
-    <br>
-    <button type="button" id="agregarSeleccionados" class="btn-secundario">Agregar a seleccionados</button>
-  </form>
+    <!-- Columna derecha - Seleccionados y agregar -->
+    <div class="columna-derecha">
+      <!-- Integrantes seleccionados -->
+      <div class="seccion-seleccionados">
+        <div class="seleccionados-header">
+          <h3>Integrantes Seleccionados</h3>
+          <span id="contadorSeleccionados" class="contador">({{ seleccionados|length }})</span>
+        </div>
+        
+        <div class="lista-container">
+          <ul id="listaSeleccionados" class="lista-seleccionados">
+            {% for integrante in seleccionados %}
+              <li data-id="{{ integrante.id }}">
+                <span class="integrante-info">
+                  <strong>{{ integrante.nombre_completo }}</strong>
+                  <span class="integrante-detalles">
+                    {{ integrante.puesto }} • {{ integrante.area.nombre }}
+                  </span>
+                </span>
+                <button class="eliminarBtn btn-eliminar" type="button" title="Eliminar">
+                  ✕
+                </button>
+              </li>
+            {% empty %}
+              <li id="mensajeVacio" class="mensaje-vacio">
+                <span>No hay integrantes seleccionados</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
 
-  <!-- Formulario para agregar un integrante -->
-  <h3>Agregar integrante</h3>
-  <form method="post" class="agregar-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="agregar_integrante" class="btn">Agregar</button>
-  </form>
-
-  <!-- Lista de integrantes seleccionados -->
-  <h3>Integrantes seleccionados</h3>
-  <ul id="listaSeleccionados" class="lista-seleccionados">
-    {% for integrante in seleccionados %}
-      <li data-id="{{ integrante.id }}">
-        {{ integrante.nombre_completo }} - {{ integrante.puesto }} 
-        <button class="eliminarBtn btn-eliminar" type="button">Eliminar</button>
-      </li>
-    {% empty %}
-      <!-- Este li se controla con JS -->
-      <li id="mensajeVacio">.....</li>
-    {% endfor %}
-  </ul>
+      <!-- Formulario para agregar nuevo integrante -->
+      <div class="seccion-agregar">
+        <h3>Agregar Nuevo Integrante</h3>
+        <form method="post" class="agregar-form">
+          {% csrf_token %}
+          <div class="form-container">
+            {{ form.as_p }}
+          </div>
+          <button type="submit" name="agregar_integrante" class="btn btn-agregar">
+            👥 Agregar Integrante
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

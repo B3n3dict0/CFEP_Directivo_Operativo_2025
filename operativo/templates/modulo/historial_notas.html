@@ -1,5 +1,3 @@
-{% extends "base.html" %}
-
 {% block content %}
 <h2>Historial de Notas</h2>
 <table border="1" cellpadding="5" cellspacing="0">
@@ -27,3 +25,12 @@
     </tbody>
 </table>
 {% endblock %}
+
+
+
+<section>
+  <form method="post">
+     {% csrf_token %}
+     <button type="submit" name="descargar_pdf">📥 Descargar PDF</button>
+  </form>
+</section>
