@@ -61,7 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const formGuardarTodo = document.getElementById('guardar-todo-form');
     formGuardarTodo.addEventListener('submit', function(e) {
         e.preventDefault();
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const csrfTokenElem = document.querySelector('[name=csrfmiddlewaretoken]');
+        const csrfToken = csrfTokenElem ? csrfTokenElem.value : '';
+        const url = formGuardarTodo.dataset.url; // URL de la view pasada desde HTML
 
         // Preparar payload
         const payload = [];
@@ -73,20 +76,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if(payload.length === 0) return; // nada que guardar
 
-        // Enviar fetch POST a una nueva view
-        fetch("{% url 'guardar_todo' %}", {
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({notas: payload})
-        }).then(res => {
+        })
+        .then(res => {
             if(res.ok){
                 location.reload(); // recargar la página con las notas guardadas
             } else {
                 alert("Error al guardar las notas.");
             }
-        });
+        })
+        .catch(err => console.error("Error al enviar notas:", err));
     });
 });

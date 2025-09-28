@@ -10,4 +10,6 @@ urlpatterns = [
     # Rutas nuevas para notas
     path('editar/<int:nota_id>/', views.editar_nota, name='editar_nota'),
     path('guardar-todo/', views.guardar_todo, name='guardar_todo'),
+    path('historial-notas/', views.historial_notas, name='historial_notas'),
+
 ]

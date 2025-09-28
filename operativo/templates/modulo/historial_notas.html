@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Historial de Notas</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Apartado</th>
+            <th>Texto</th>
+            <th>Fecha de Creación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for nota in notas %}
+        <tr>
+            <td>{{ nota.id }}</td>
+            <td>{{ nota.get_apartado_display }}</td>
+            <td>{{ nota.texto }}</td>
+            <td>{{ nota.fecha_creacion }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No hay notas registradas.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

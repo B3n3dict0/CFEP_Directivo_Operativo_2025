@@ -64,7 +64,7 @@ def lista_notas(request):
     notas = Nota.objects.all().order_by('-fecha_creacion')
     return render(request, 'operativo/partials/desarrollo.html', {'notas': notas})
 
-@csrf_exempt  # necesario porque usamos fetch con CSRF token
+ # necesario porque usamos fetch con CSRF token
 def guardar_todo(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -74,6 +74,10 @@ def guardar_todo(request):
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'}, status=400)
 
+def historial_notas(request):
+    # Obtener todas las notas ordenadas por fecha (más reciente primero)
+    notas = Nota.objects.all().order_by('-fecha_creacion')
+    return render(request, 'modulo/historial_notas.html', {'notas': notas})
 
 def crear_acuerdo_operativo(request):
     return render(request, 'modulo/crear_acuerdo_operativo.html')

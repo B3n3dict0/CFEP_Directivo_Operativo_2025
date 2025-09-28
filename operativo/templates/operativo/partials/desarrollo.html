@@ -108,10 +108,17 @@
 </div>
 
 <!-- Botón general -->
-<hr>
-<form id="guardar-todo-form">
+<form id="guardar-todo-form" data-url="{% url 'guardar_todo' %}">
+  {% csrf_token %}
   <button type="submit">Guardar Todo</button>
 </form>
+
+<section>
+  <div>
+    <a href="{% url 'historial_notas' %}">Ver Historial de Notas</a>
+
+  </div>
+</section>
 
 <section>
   <form method="post">

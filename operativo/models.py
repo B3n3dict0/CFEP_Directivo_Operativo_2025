@@ -1,12 +1,15 @@
 # operativo/models.py
 from django.db import models
 from django.utils import timezone
+
+# Modelo de Área
 class Area(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.nombre
 
+# Modelo de Integrante
 class Integrante(models.Model):
     nombre_completo = models.CharField(max_length=200)
     puesto = models.CharField(max_length=100)
@@ -15,8 +18,7 @@ class Integrante(models.Model):
     def __str__(self):
         return f"{self.nombre_completo} - {self.puesto}"
 
-
-#agregar notas
+# Modelo de Nota
 class Nota(models.Model):
     APARTADOS = [
         ('produccion', 'Producción'),
@@ -27,13 +29,13 @@ class Nota(models.Model):
 
     apartado = models.CharField(max_length=50, choices=APARTADOS)
     texto = models.TextField()
-    fecha_creacion = models.DateTimeField(default=timezone.now)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)       # ← Corregido
     fecha_modificacion = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.get_apartado_display()} - {self.fecha_creacion.strftime('%Y-%m-%d %H:%M')}"
 
-#aqui empieza mi logica para crear acuerdos operativo
+# Modelo de Acuerdo Operativo
 class AcuerdoOperativo(models.Model):
     numerador = models.PositiveIntegerField()
     unidad = models.PositiveSmallIntegerField(choices=[(i, str(i)) for i in range(1, 10)])
