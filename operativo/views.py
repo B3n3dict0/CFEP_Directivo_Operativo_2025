@@ -2,12 +2,7 @@ from django.utils import timezone
 from directivo import models
 from .forms import IntegranteForm
 from .models import AcuerdoOperativo, Integrante
-import os
 from django.conf import settings
-from django.http import HttpResponse
-from docx import Document
-from docx2pdf import convert
-import tempfile
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Nota
 from .forms import NotaForm
@@ -139,59 +134,39 @@ def historial_acuerdo_operativo(request):
     })
     
     
-# Logica para descargar pdf
-def exportar_pdf(request):
-    if request.method == "POST" and "descargar_pdf" in request.POST:
-        # 📌 Datos dinámicos
-        fecha = timezone.now().strftime("%Y-%m-%d")
-        integrantes = request.POST.getlist("integrantes")
-        notas = request.POST.get("notas", "")
-        acuerdos = request.POST.getlist("acuerdo")
+    
 
-        # 📌 Abrir plantilla Word
-        plantilla_path = os.path.join(settings.BASE_DIR, "operativo/templates/plantillas/Operativa.docx")
-        doc = Document(plantilla_path)
 
-        # 👉 Aquí deberías buscar los marcadores y reemplazarlos
-        for p in doc.paragraphs:
-            if "{{ fecha }}" in p.text:
-                p.text = p.text.replace("{{ fecha }}", fecha)
-            if "{{ notas }}" in p.text:
-                p.text = p.text.replace("{{ notas }}", notas)
+def seleccionar_integrantes(request):
+    integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
 
-        # 👉 Insertar integrantes
-        for p in doc.paragraphs:
-            if "{{ integrantes }}" in p.text:
-                p.text = p.text.replace("{{ integrantes }}", "")
-                for i in integrantes:
-                    doc.add_paragraph(f"- {i}", style="List Bullet")
+    if request.method == "POST":
+        # Tomar lista de IDs enviados desde el formulario oculto
+        seleccionados_ids = request.POST.getlist("integrantes")
+        request.session["integrantes_seleccionados"] = [str(i) for i in seleccionados_ids]
+        return redirect("seleccionar_integrantes")
 
-        # 👉 Insertar acuerdos
-        for p in doc.paragraphs:
-            if "{{ acuerdos }}" in p.text:
-                p.text = p.text.replace("{{ acuerdos }}", "")
-                for ac in acuerdos:
-                    doc.add_paragraph(f"• {ac}", style="List Bullet")
+    # Obtener seleccionados de la sesión
+    seleccionados_ids = request.session.get("integrantes_seleccionados", [])
+    seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
-        # 📌 Ruta de almacenamiento interno (copias del proyecto)
-        carpeta_base = os.path.join(settings.BASE_DIR, "operativo", "documentos", fecha)
-        os.makedirs(carpeta_base, exist_ok=True)
+    return render(request, "modulo/integrantes.html", {
+        "integrantes": integrantes,
+        "seleccionados": seleccionados,
+    })
 
-        # Guardar Word en carpeta del proyecto
-        word_path = os.path.join(carpeta_base, f"Acta_{fecha}.docx")
-        doc.save(word_path)
 
-        # 📌 Convertir Word a PDF temporalmente
-        tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        convert(word_path, tmp_pdf.name)
+def descarga(request):
+    # Tomar solo los integrantes seleccionados de la sesión
+    seleccionados_ids = request.session.get("integrantes_seleccionados", [])
+    integrantes = Integrante.objects.filter(id__in=seleccionados_ids).order_by("area__nombre", "nombre_completo")
 
-        # 📌 Devolver PDF al navegador
-        with open(tmp_pdf.name, "rb") as f:
-            pdf_data = f.read()
-        os.unlink(tmp_pdf.name)  # limpiar temporal
+    notas = Nota.objects.all().order_by("fecha_creacion")
+    acuerdos = AcuerdoOperativo.objects.all().order_by("fecha_creacion")
 
-        response = HttpResponse(pdf_data, content_type="application/pdf")
-        response["Content-Disposition"] = f'attachment; filename="Acta_{fecha}.pdf"'
-        return response
-
-    return HttpResponse("No se enviaron datos.")
+    context = {
+        "integrantes": integrantes,
+        "notas": notas,
+        "acuerdos": acuerdos,
+    }
+    return render(request, "modulo/descarga.html", context)

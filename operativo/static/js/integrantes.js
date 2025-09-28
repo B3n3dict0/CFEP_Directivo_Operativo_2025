@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const lista = document.getElementById("listaSeleccionados");
     const botonAgregar = document.getElementById("agregarSeleccionados");
     const mensajeVacio = document.getElementById("mensajeVacio");
+    const formGuardar = document.getElementById("formGuardarSeleccion");
 
     // Almacena los seleccionados para evitar duplicados
     const seleccionadosSet = new Set();
@@ -10,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (li.dataset.id) seleccionadosSet.add(li.dataset.id);
     });
 
-    // Mostrar/ocultar mensaje vacío
     function actualizarMensaje() {
         if (lista.querySelectorAll("li[data-id]").length === 0) {
             mensajeVacio.style.display = "block";
@@ -46,5 +46,20 @@ document.addEventListener("DOMContentLoaded", function () {
             li.remove();
             actualizarMensaje();
         }
+    });
+
+    // Preparar los inputs hidden al enviar el formulario
+    formGuardar.addEventListener("submit", function (e) {
+        // Eliminar inputs previos si los hay
+        formGuardar.querySelectorAll('input[name="integrantes"]').forEach(i => i.remove());
+
+        // Crear un input hidden por cada seleccionado
+        Array.from(lista.querySelectorAll("li[data-id]")).forEach(li => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "integrantes";
+            input.value = li.dataset.id;
+            formGuardar.appendChild(input);
+        });
     });
 });
