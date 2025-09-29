@@ -9,6 +9,16 @@ from .forms import NotaForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from .models import Nota, AcuerdoOperativo
+ # <- aquí está el nombre correcto
+
+
+
+
 
 def operativo_view(request):
     fecha_actual = timezone.now()
@@ -170,3 +180,56 @@ def descarga(request):
         "acuerdos": acuerdos,
     }
     return render(request, "modulo/descarga.html", context)
+
+
+
+
+def descargar_pdf(request):
+    if request.method == "POST":
+        # Obtener los IDs seleccionados desde el form
+        notas_ids = request.POST.getlist('notas_seleccionadas')
+        acuerdos_ids = request.POST.getlist('acuerdos_seleccionados')
+
+        # Filtrar los objetos según los IDs seleccionados
+        notas = Nota.objects.filter(id__in=notas_ids)
+        acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
+
+        # Crear el PDF en memoria
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="historial.pdf"'
+
+        pdf = canvas.Canvas(response, pagesize=letter)
+        ancho, alto = letter
+        y = alto - inch
+
+        # Sección de Notas
+        pdf.setFont("Helvetica-Bold", 14)
+        pdf.drawString(inch, y, "Notas Seleccionadas")
+        y -= 0.5 * inch
+        pdf.setFont("Helvetica", 12)
+        for nota in notas:
+            pdf.drawString(inch, y, f"{nota.get_apartado_display()} - {nota.texto} ({nota.fecha_creacion.strftime('%d/%m/%Y %H:%M')})")
+            y -= 0.25 * inch
+            if y < inch:
+                pdf.showPage()
+                y = alto - inch
+
+        # Sección de Acuerdos
+        y -= 0.3 * inch
+        pdf.setFont("Helvetica-Bold", 14)
+        pdf.drawString(inch, y, "Acuerdos Seleccionados")
+        y -= 0.3 * inch
+        pdf.setFont("Helvetica", 12)
+        for a in acuerdos:
+            pendiente = "Sí" if a.pendiente else "No"
+            pdf.drawString(inch, y, f"{a.numerador}. Unidad: {a.unidad} - {a.acuerdo} - Responsable: {a.responsable.nombre_completo} - Fecha límite: {a.fecha_limite.strftime('%d/%m/%Y')} - Pendiente: {pendiente} - Avance: {a.porcentaje_avance}% - Creación: {a.fecha_creacion.strftime('%d/%m/%Y %H:%M')}")
+            y -= 0.25 * inch
+            if y < inch:
+                pdf.showPage()
+                y = alto - inch
+
+        pdf.save()
+        return response
+
+    else:
+        return HttpResponse("Método no permitido", status=405)
