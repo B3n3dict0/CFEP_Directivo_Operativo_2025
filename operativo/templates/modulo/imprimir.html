@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Minuta de Reunión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            font-size: 12pt;
+        }
+        .titulo-principal {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+        }
+        .subtitulo {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        td {
+            border: 1px solid #000; /* solo líneas internas */
+            padding: 6px;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="titulo-principal">MINUTA DE REUNIÓN</div>
+
+    <!-- Datos Generales -->
+    <table>
+        <tr>
+            <td colspan="2"><span class="subtitulo">Título de la reunión:</span> Reunión Operativa Central Felipe Carrillo Puerto</td>
+        </tr>
+        <tr>
+            <td><span class="subtitulo">Lugar:</span> Sala de Juntas de la Central FCP</td>
+            <td><span class="subtitulo">Fecha y Horario:</span> {{ FECHA }}</td>
+        </tr>
+    </table>
+
+    <!-- Objetivo(s) - PROPÓSITO -->
+    <table>
+        <tr>
+            <td><span class="subtitulo">Objetivo(s) - PROPÓSITO</span></td>
+        </tr>
+        <tr>
+            <td>Informar el estado de las unidades, proporcionar la problemática prioritaria de las áreas operativas e informar el avance de los programas de mantenimiento.</td>
+        </tr>
+    </table>
+
+    <!-- IMPORTANCIA -->
+    <table>
+        <tr>
+            <td><span class="subtitulo">IMPORTANCIA</span></td>
+        </tr>
+        <tr>
+            <td>Que el personal oriente sus actividades a la solución de las necesidades prioritarias para mantener las unidades operando en forma confiable y segura, además de informar el avance de los proyectos de mantenimiento.</td>
+        </tr>
+    </table>
+
+    <!-- Participantes -->
+    <table>
+        <tr>
+            <td><span class="subtitulo">Participantes</span></td>
+        </tr>
+        <tr>
+            <td>{{ INTEGRANTES }}</td>
+        </tr>
+    </table>
+
+    <!-- Orden del día -->
+    <table>
+        <tr>
+            <td colspan="2"><span class="subtitulo">Orden del día</span></td>
+        </tr>
+        <tr>
+            <td>ESTADO DE LAS UNIDADES – Seguimiento a régimen térmico, anomalías FCP, avisos de operación y química, maniobras de riesgo</td>
+            <td>Producción</td>
+        </tr>
+        <tr>
+            <td>Seguimiento de actividades que originaron salida o decremento de la unidad (concluidas, en proceso, próximas 24 hrs.), avance de proyectos, avisos de mantenimiento predictivo, actividades con riesgo</td>
+            <td>Mantenimiento</td>
+        </tr>
+        <tr>
+            <td>Avisos de atención inmediata relacionados con seguridad</td>
+            <td>Seguridad</td>
+        </tr>
+        <tr>
+            <td>Eventos que afecten condiciones de seguridad de la central</td>
+            <td>Seguridad</td>
+        </tr>
+        <tr>
+            <td>Eventos ambientales que afecten la central</td>
+            <td>Ambiental</td>
+        </tr>
+        <tr>
+            <td>Presentación de problemática y solución en materia de seguridad</td>
+            <td>Seguridad</td>
+        </tr>
+        <tr>
+            <td>Presentación de problemática y solución en materia ambiental</td>
+            <td>Ambiental</td>
+        </tr>
+        <tr>
+            <td>Revisión de Acuerdos Anteriores – Seguimiento operativo a anomalías FCP</td>
+            <td>Calidad</td>
+        </tr>
+        <tr>
+            <td>Creación de Acuerdos Nuevos – Seguimiento operativo de anomalías Central FCP</td>
+            <td>Todos</td>
+        </tr>
+        <tr>
+            <td>Ratificación de Actividades Prioritarias del Día</td>
+            <td>Superintendencia General</td>
+        </tr>
+    </table>
+
+    <!-- Desarrollo -->
+    <table>
+        <tr>
+            <td><span class="subtitulo">Desarrollo</span></td>
+        </tr>
+        <tr>
+            <td>{{ NOTAS }}</td>
+        </tr>
+    </table>
+
+    <!-- Compromisos y Acuerdos -->
+    <table>
+        <tr>
+            <td><span class="subtitulo">Compromisos y Acuerdos</span></td>
+        </tr>
+        <tr>
+            <td>{{ ACUERDOS }}</td>
+        </tr>
+    </table>
+
+</body>
+</html>

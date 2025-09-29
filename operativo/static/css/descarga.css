@@ -1,0 +1,414 @@
+/* descarga.css - Versión mejorada con separación clara de secciones */
+
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5; /* Gris claro */
+    margin: 0;
+    padding: 20px;
+    color: #333; /* Gris oscuro para texto */
+}
+
+.integrantes {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+/* Títulos principales */
+h2 {
+    color: #8B4513; /* Rojo moreno */
+    border-bottom: 2px solid #4CAF50; /* Verde */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #8B4513; /* Rojo moreno */
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+/* SEPARACIÓN DE SECCIONES PRINCIPALES */
+.seccion-principal {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* Cabecera de sección principal */
+.cabecera-seccion {
+    background-color: #8B4513; /* Rojo moreno */
+    color: white;
+    padding: 15px 20px;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+/* Contenido de sección principal */
+.contenido-seccion {
+    padding: 25px;
+    background-color: white;
+}
+
+/* Sección de Integrantes */
+#seccion-integrantes .contenido-seccion {
+    border-left: 5px solid #4CAF50; /* Verde */
+}
+
+/* Layout de columnas para integrantes */
+.integrantes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.columna-izquierda,
+.columna-derecha {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Secciones internas de integrantes */
+.seccion-buscador,
+.seccion-lista,
+.seccion-seleccionados,
+.seccion-agregar {
+    background-color: #f9f9f9; /* Gris muy claro */
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid #ddd; /* Gris medio */
+}
+
+/* Sección de Notas */
+#seccion-notas .contenido-seccion {
+    border-left: 5px solid #8B4513; /* Rojo moreno */
+    background-color: #fafafa;
+}
+
+.contenedor-notas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.nota-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nota-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.nota-apartado {
+    display: inline-block;
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+}
+
+.nota-texto {
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* Sección de Acuerdos */
+#seccion-acuerdos .contenido-seccion {
+    border-left: 5px solid #666; /* Gris oscuro */
+    background-color: #f8f8f8;
+}
+
+.contenedor-acuerdos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 15px;
+}
+
+.acuerdo-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.acuerdo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.acuerdo-numero {
+    display: inline-block;
+    background-color: #8B4513; /* Rojo moreno */
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.acuerdo-texto {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.acuerdo-responsable {
+    color: #666;
+    font-style: italic;
+    border-top: 1px dashed #ddd;
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+/* Formularios y inputs */
+.buscador-form .input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.input-text {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc; /* Gris claro */
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-text:focus {
+    outline: none;
+    border-color: #4CAF50; /* Verde */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Botones */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-buscar {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.btn-buscar:hover {
+    background-color: #45a049; /* Verde más oscuro */
+}
+
+.btn-secundario {
+    background-color: #8B4513; /* Rojo moreno */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.btn-secundario:hover {
+    background-color: #7a3b10; /* Rojo moreno más oscuro */
+}
+
+.btn-agregar {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.btn-agregar:hover {
+    background-color: #45a049; /* Verde más oscuro */
+}
+
+.btn-descargar {
+    background-color: #8B4513; /* Rojo moreno */
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-descargar:hover {
+    background-color: #7a3b10; /* Rojo moreno más oscuro */
+}
+
+/* Select múltiple */
+.select-multiple {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+}
+
+.select-multiple:focus {
+    outline: none;
+    border-color: #4CAF50; /* Verde */
+}
+
+/* Lista de seleccionados */
+.seleccionados-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.contador {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.lista-seleccionados {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.lista-seleccionados li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lista-seleccionados li:last-child {
+    border-bottom: none;
+}
+
+.mensaje-vacio {
+    color: #999; /* Gris medio */
+    font-style: italic;
+    text-align: center;
+    padding: 20px !important;
+}
+
+/* Botón eliminar en lista de seleccionados */
+.btn-eliminar {
+    background-color: #f44336; /* Rojo para eliminar */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 3px 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-eliminar:hover {
+    background-color: #d32f2f; /* Rojo más oscuro */
+}
+
+/* Formulario agregar integrante */
+.agregar-form .form-container {
+    margin-bottom: 15px;
+}
+
+.agregar-form p {
+    margin-bottom: 10px;
+}
+
+.agregar-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #666; /* Gris medio */
+}
+
+.agregar-form input,
+.agregar-form select,
+.agregar-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.agregar-form input:focus,
+.agregar-form select:focus,
+.agregar-form textarea:focus {
+    outline: none;
+    border-color: #4CAF50; /* Verde */
+}
+
+/* Checkboxes para notas y acuerdos */
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .integrantes-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .buscador-form .input-group {
+        flex-direction: column;
+    }
+    
+    body {
+        padding: 10px;
+    }
+    
+    .contenedor-notas,
+    .contenedor-acuerdos {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estados de elementos seleccionados */
+option:checked {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+/* Scrollbar personalizado */
+.lista-seleccionados::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lista-seleccionados::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.lista-seleccionados::-webkit-scrollbar-thumb {
+    background: #c1c1c1; /* Gris */
+    border-radius: 3px;
+}
+
+.lista-seleccionados::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8; /* Gris más oscuro */
+}

@@ -157,24 +157,26 @@ def descarga(request):
         "form": form
     })
 
+
 def descargar_pdf(request):
     if request.method == "POST":
-        # Obtener IDs seleccionados
+        # Obtener IDs seleccionados desde el formulario
         notas_ids = request.POST.getlist("notas_seleccionadas")
         acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
-        integrantes_ids = request.POST.getlist("integrantes")
+        integrantes_ids = request.POST.getlist("integrantes")  # agregar en tu form hidden inputs si es necesario
 
-        # Consultar objetos
+        # Consultar objetos en la base de datos
         integrantes = Integrante.objects.filter(id__in=integrantes_ids)
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
-        # Preparar textos
+        # Preparar los textos para la plantilla
         fecha = date.today().strftime("%d/%m/%Y")
         txt_integrantes = "\n".join([f"{i+1}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes)])
         txt_notas = "\n".join([f"{i+1}. {x.get_apartado_display()} - {x.texto}" for i, x in enumerate(notas)])
         txt_acuerdos = "\n".join([f"{i+1}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})" for i, x in enumerate(acuerdos)])
 
+        # Contexto para la plantilla
         context = {
             "FECHA": fecha,
             "INTEGRANTES": txt_integrantes,
@@ -182,16 +184,17 @@ def descargar_pdf(request):
             "ACUERDOS": txt_acuerdos,
         }
 
-        # Renderizar plantilla desde la carpeta templates de la app
-        html_string = render_to_string("operativo/Operativo.html", context)
+        # Renderizar HTML desde imprimir.html
+        html_string = render_to_string("modulo/imprimir.html", context)
 
         # Generar PDF
         response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = 'attachment; filename="Operativo_Completo.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="Minuta_Reunion.pdf"'
+
         pisa_status = pisa.CreatePDF(io.BytesIO(html_string.encode("UTF-8")), dest=response)
 
         if pisa_status.err:
-            return HttpResponse("Error al generar el PDF <pre>" + html_string + "</pre>")
+            return HttpResponse(f"Error al generar el PDF <pre>{html_string}</pre>")
 
         return response
 

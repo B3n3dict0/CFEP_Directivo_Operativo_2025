@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Descargar PDF</title>
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
 <div class="integrantes">
@@ -61,14 +61,20 @@
       <!-- Formulario de descarga PDF -->
       <form method="post" action="{% url 'descargar_pdf' %}" id="formDescargarPDF">
         {% csrf_token %}
+
+        <!-- CONTENEDOR PARA INPUTS OCULTOS DE INTEGRANTES -->
+        <div id="inputsIntegrantes"></div>
+
         <h3>Notas</h3>
         {% for nota in notas %}
           <label><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"> {{ nota.get_apartado_display }} - {{ nota.texto }}</label><br>
         {% endfor %}
+
         <h3>Acuerdos</h3>
         {% for acuerdo in acuerdos %}
           <label><input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}"> {{ acuerdo.numerador }}. {{ acuerdo.acuerdo }} ({{ acuerdo.responsable.nombre_completo }})</label><br>
         {% endfor %}
+
         <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
       </form>
 
