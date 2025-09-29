@@ -1,30 +1,22 @@
-from django.utils import timezone
-from directivo import models
-from .forms import IntegranteForm
-from .models import AcuerdoOperativo, Integrante
-from django.conf import settings
+from datetime import date
+import json
+import io
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Nota
-from .forms import NotaForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-import json
-from reportlab.pdfgen import canvas
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.utils import timezone
+
+from xhtml2pdf import pisa
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
+from PyPDF2 import PdfReader, PdfWriter
 
-# Tus modelos y formularios
-from .models import Integrante, Nota, AcuerdoOperativo
-from .forms import IntegranteForm
+from directivo import models
+from .forms import IntegranteForm, NotaForm
+from .models import AcuerdoOperativo, Integrante, Nota
 
-def operativo_view(request):
-    fecha_actual = timezone.now()
-    return render(request, "operativo/base.html", {"fecha_actual": fecha_actual})
 
-# Vista unificada para mostrar y agregar integrantes
 def operativo_view(request):
     # Formulario para agregar integrantes
     if request.method == "POST" and 'agregar_integrante' in request.POST:
@@ -43,7 +35,6 @@ def operativo_view(request):
     if query:
         integrantes = integrantes.filter(nombre_completo__icontains=query)
 
-    # Lista de seleccionados vacía al inicio (solo se maneja en JS)
     seleccionados = []
 
     return render(request, "operativo/base.html", {
@@ -52,7 +43,7 @@ def operativo_view(request):
         'seleccionados': seleccionados,
         'fecha_actual': timezone.now(),
     })
-    
+
 
 def editar_nota(request, nota_id):
     nota = get_object_or_404(Nota, id=nota_id)
@@ -60,16 +51,17 @@ def editar_nota(request, nota_id):
         form = NotaForm(request.POST, instance=nota)
         if form.is_valid():
             form.save()
-            return redirect('operativo_index')  # o lista_notas si usas esa view
+            return redirect('operativo_index')
     else:
         form = NotaForm(instance=nota)
     return render(request, 'operativo/partials/desarrollo.html', {'form': form, 'nota': nota})
+
 
 def lista_notas(request):
     notas = Nota.objects.all().order_by('-fecha_creacion')
     return render(request, 'operativo/partials/desarrollo.html', {'notas': notas})
 
- # necesario porque usamos fetch con CSRF token
+
 def guardar_todo(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -79,22 +71,15 @@ def guardar_todo(request):
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'}, status=400)
 
+
 def historial_notas(request):
-    # Obtener todas las notas ordenadas por fecha (más reciente primero)
     notas = Nota.objects.all().order_by('-fecha_creacion')
     return render(request, 'modulo/historial_notas.html', {'notas': notas})
 
-def crear_acuerdo_operativo(request):
-    return render(request, 'modulo/crear_acuerdo_operativo.html')
 
-def historial_acuerdos(request):
-    return render(request, 'modulo/historial_acuerdo_operativa.html')
-
-
-#logica de crear acuerdo 
 def crear_acuerdo_operativo(request):
     integrantes = Integrante.objects.all().order_by('area__nombre', 'nombre_completo')
-    unidades = list(range(1, 10))  # Para el dropdown de unidades
+    unidades = list(range(1, 10))
 
     if request.method == "POST":
         filas = request.POST.getlist('numerador')
@@ -124,12 +109,10 @@ def crear_acuerdo_operativo(request):
         'fecha_actual': timezone.now(),
         'unidades': unidades
     })
-    
-def historial_acuerdo_operativo(request):
-    # Consultar todos los acuerdos, ordenados por fecha de creación
-    acuerdos = AcuerdoOperativo.objects.all().order_by('-fecha_creacion')
 
-    # Búsqueda opcional por numerador, acuerdo o responsable
+
+def historial_acuerdo_operativo(request):
+    acuerdos = AcuerdoOperativo.objects.all().order_by('-fecha_creacion')
     query = request.GET.get('q')
     if query:
         acuerdos = acuerdos.filter(
@@ -137,26 +120,20 @@ def historial_acuerdo_operativo(request):
             models.Q(numerador__icontains=query) |
             models.Q(responsable__nombre_completo__icontains=query)
         )
-
     return render(request, 'modulo/historial_acuerdo_operativo.html', {
         'acuerdos': acuerdos,
         'query': query,
     })
-    
-    
-    
+
 
 def seleccionar_integrantes(request):
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
 
     if request.method == "POST":
-        # Tomar lista de IDs enviados desde el formulario oculto
         seleccionados_ids = request.POST.getlist("integrantes")
         request.session["integrantes_seleccionados"] = [str(i) for i in seleccionados_ids]
-        # 👇 Redirige directo a descarga en lugar de recargar la misma página
         return redirect("descarga")
 
-    # Obtener seleccionados de la sesión
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
     seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
@@ -166,16 +143,6 @@ def seleccionar_integrantes(request):
     })
 
 
-
-
-
-
-
-
-
-
-
-# Vista principal de descarga
 def descarga(request):
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
     notas = Nota.objects.all().order_by("fecha_creacion")
@@ -190,69 +157,42 @@ def descarga(request):
         "form": form
     })
 
-
-# Descargar PDF con integrantes, notas y acuerdos seleccionados
 def descargar_pdf(request):
     if request.method == "POST":
-        integrantes_ids = request.POST.getlist('integrantes')
-        notas_ids = request.POST.getlist('notas_seleccionadas')
-        acuerdos_ids = request.POST.getlist('acuerdos_seleccionados')
+        # Obtener IDs seleccionados
+        notas_ids = request.POST.getlist("notas_seleccionadas")
+        acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
+        integrantes_ids = request.POST.getlist("integrantes")
 
-        integrantes = Integrante.objects.filter(id__in=integrantes_ids).order_by("area__nombre", "nombre_completo")
+        # Consultar objetos
+        integrantes = Integrante.objects.filter(id__in=integrantes_ids)
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="historial.pdf"'
+        # Preparar textos
+        fecha = date.today().strftime("%d/%m/%Y")
+        txt_integrantes = "\n".join([f"{i+1}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes)])
+        txt_notas = "\n".join([f"{i+1}. {x.get_apartado_display()} - {x.texto}" for i, x in enumerate(notas)])
+        txt_acuerdos = "\n".join([f"{i+1}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})" for i, x in enumerate(acuerdos)])
 
-        pdf = canvas.Canvas(response, pagesize=letter)
-        ancho, alto = letter
-        y = alto - inch
+        context = {
+            "FECHA": fecha,
+            "INTEGRANTES": txt_integrantes,
+            "NOTAS": txt_notas,
+            "ACUERDOS": txt_acuerdos,
+        }
 
-        # Integrantes
-        pdf.setFont("Helvetica-Bold", 14)
-        pdf.drawString(inch, y, "Integrantes Seleccionados")
-        y -= 0.5 * inch
-        pdf.setFont("Helvetica", 12)
-        if integrantes.exists():
-            for i in integrantes:
-                pdf.drawString(inch, y, f"{i.nombre_completo} - {i.puesto} ({i.area.nombre})")
-                y -= 0.25 * inch
-                if y < inch:
-                    pdf.showPage()
-                    y = alto - inch
-        else:
-            pdf.drawString(inch, y, "No hay integrantes seleccionados")
-            y -= 0.25 * inch
+        # Renderizar plantilla desde la carpeta templates de la app
+        html_string = render_to_string("operativo/Operativo.html", context)
 
-        # Notas
-        y -= 0.3 * inch
-        pdf.setFont("Helvetica-Bold", 14)
-        pdf.drawString(inch, y, "Notas Seleccionadas")
-        y -= 0.5 * inch
-        pdf.setFont("Helvetica", 12)
-        for nota in notas:
-            pdf.drawString(inch, y, f"{nota.get_apartado_display()} - {nota.texto} ({nota.fecha_creacion.strftime('%d/%m/%Y %H:%M')})")
-            y -= 0.25 * inch
-            if y < inch:
-                pdf.showPage()
-                y = alto - inch
+        # Generar PDF
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = 'attachment; filename="Operativo_Completo.pdf"'
+        pisa_status = pisa.CreatePDF(io.BytesIO(html_string.encode("UTF-8")), dest=response)
 
-        # Acuerdos
-        y -= 0.3 * inch
-        pdf.setFont("Helvetica-Bold", 14)
-        pdf.drawString(inch, y, "Acuerdos Seleccionados")
-        y -= 0.3 * inch
-        pdf.setFont("Helvetica", 12)
-        for a in acuerdos:
-            pendiente = "Sí" if a.pendiente else "No"
-            pdf.drawString(inch, y, f"{a.numerador}. Unidad: {a.unidad} - {a.acuerdo} - Responsable: {a.responsable.nombre_completo} - Fecha límite: {a.fecha_limite.strftime('%d/%m/%Y')} - Pendiente: {pendiente} - Avance: {a.porcentaje_avance}% - Creación: {a.fecha_creacion.strftime('%d/%m/%Y %H:%M')}")
-            y -= 0.25 * inch
-            if y < inch:
-                pdf.showPage()
-                y = alto - inch
+        if pisa_status.err:
+            return HttpResponse("Error al generar el PDF <pre>" + html_string + "</pre>")
 
-        pdf.save()
         return response
 
     return HttpResponse("Método no permitido", status=405)

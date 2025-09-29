@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -55,10 +56,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'djangocrud.urls'
 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'operativo', 'plantillas')],  # <-- aquí le dices dónde está tu plantilla
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,6 +74,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'djangocrud.wsgi.application'
 
@@ -118,6 +123,10 @@ TIME_ZONE = 'America/Merida'
 USE_I18N = True
 
 USE_TZ = True
+# settings.py
+
+# Ruta completa de LibreOffice en tu Windows
+
 
 
 # Static files (CSS, JavaScript, Images)
@@ -126,7 +135,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Tu carpeta static principal
+    os.path.join(BASE_DIR, "static")
+  # Tu carpeta static principal
 ]
 
 LOGIN_URL = '/signin'
