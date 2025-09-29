@@ -4,7 +4,6 @@
 <head>
     <title>Descargar PDF</title>
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
-    <script src="{% static 'js/integrantes.js' %}"></script>
 </head>
 <body>
 <div class="integrantes">
@@ -43,24 +42,12 @@
       <div class="seccion-seleccionados">
         <div class="seleccionados-header">
           <h3>Integrantes Seleccionados</h3>
-          <span id="contadorSeleccionados" class="contador">({{ seleccionados|length }})</span>
+          <span id="contadorSeleccionados" class="contador">(0)</span>
         </div>
         <ul id="listaSeleccionados" class="lista-seleccionados">
-          {% for integrante in seleccionados %}
-          <li data-id="{{ integrante.id }}">
-            <span class="integrante-info"><strong>{{ integrante.nombre_completo }}</strong> <span class="integrante-detalles">{{ integrante.puesto }} • {{ integrante.area.nombre }}</span></span>
-            <button class="eliminarBtn btn-eliminar" type="button" title="Eliminar">✕</button>
-          </li>
-          {% empty %}
           <li id="mensajeVacio" class="mensaje-vacio"><span>No hay integrantes seleccionados</span></li>
-          {% endfor %}
         </ul>
       </div>
-
-      <form method="post" id="formGuardarSeleccion">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-guardar">💾 Guardar Seleccionados</button>
-      </form>
 
       <div class="seccion-agregar">
         <h3>Agregar Nuevo Integrante</h3>
@@ -71,8 +58,8 @@
         </form>
       </div>
 
-      <!-- Formulario de selección de notas y acuerdos para PDF -->
-      <form method="post" action="{% url 'descargar_pdf' %}">
+      <!-- Formulario de descarga PDF -->
+      <form method="post" action="{% url 'descargar_pdf' %}" id="formDescargarPDF">
         {% csrf_token %}
         <h3>Notas</h3>
         {% for nota in notas %}
@@ -88,5 +75,7 @@
     </div>
   </div>
 </div>
+
+<script src="{% static 'js/integrantes.js' %}" defer></script>
 </body>
 </html>

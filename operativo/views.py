@@ -7,32 +7,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Nota
 from .forms import NotaForm
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 import json
-from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from django.shortcuts import render
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
-from .models import Nota, AcuerdoOperativo
- # <- aquí está el nombre correcto
 
-
+# Tus modelos y formularios
+from .models import Integrante, Nota, AcuerdoOperativo
+from .forms import IntegranteForm
 
 def operativo_view(request):
     fecha_actual = timezone.now()
     return render(request, "operativo/base.html", {"fecha_actual": fecha_actual})
-
-def historial_notas(request):
-    # Obtener todas las notas ordenadas por fecha (más reciente primero)
-    notas = Nota.objects.all().order_by('-fecha_creacion')
-    return render(request, 'modulo/historial_notas.html', {'notas': notas})
-
-def crear_acuerdo_operativo(request):
-    return render(request, 'modulo/crear_acuerdo_operativo.html')
-
-def historial_acuerdos(request):
-    return render(request, 'modulo/historial_acuerdo_operativa.html')
-
 
 # Vista unificada para mostrar y agregar integrantes
 def operativo_view(request):
@@ -89,7 +79,16 @@ def guardar_todo(request):
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'}, status=400)
 
+def historial_notas(request):
+    # Obtener todas las notas ordenadas por fecha (más reciente primero)
+    notas = Nota.objects.all().order_by('-fecha_creacion')
+    return render(request, 'modulo/historial_notas.html', {'notas': notas})
 
+def crear_acuerdo_operativo(request):
+    return render(request, 'modulo/crear_acuerdo_operativo.html')
+
+def historial_acuerdos(request):
+    return render(request, 'modulo/historial_acuerdo_operativa.html')
 
 
 #logica de crear acuerdo 
@@ -147,50 +146,45 @@ def historial_acuerdo_operativo(request):
     
     
 
-
-
-
-# Vista para seleccionar y mostrar integrantes en descarga
 def seleccionar_integrantes(request):
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
 
     if request.method == "POST":
-        # IDs actuales en sesión
-        seleccionados_ids = request.session.get("integrantes_seleccionados", [])
-        # IDs nuevos enviados desde el formulario
-        nuevos_ids = request.POST.getlist("integrantes")
-        # Unir y evitar duplicados
-        seleccionados_ids = list(set(seleccionados_ids + nuevos_ids))
-        request.session["integrantes_seleccionados"] = seleccionados_ids
-        return redirect("seleccionar_integrantes")
+        # Tomar lista de IDs enviados desde el formulario oculto
+        seleccionados_ids = request.POST.getlist("integrantes")
+        request.session["integrantes_seleccionados"] = [str(i) for i in seleccionados_ids]
+        # 👇 Redirige directo a descarga en lugar de recargar la misma página
+        return redirect("descarga")
 
-    # Seleccionados de la sesión
+    # Obtener seleccionados de la sesión
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
     seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
-    form = IntegranteForm()
-    return render(request, "modulo/descarga.html", {
+    return render(request, "modulo/integrantes.html", {
         "integrantes": integrantes,
         "seleccionados": seleccionados,
-        "form": form
     })
 
 
-# Vista para mostrar la página de descarga
+
+
+
+
+
+
+
+
+
+# Vista principal de descarga
 def descarga(request):
-    # Todos los integrantes
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
-    # Seleccionados en sesión
-    seleccionados_ids = request.session.get("integrantes_seleccionados", [])
-    seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
-    # Notas y acuerdos
     notas = Nota.objects.all().order_by("fecha_creacion")
     acuerdos = AcuerdoOperativo.objects.all().order_by("fecha_creacion")
-
     form = IntegranteForm()
+
     return render(request, "modulo/descarga.html", {
         "integrantes": integrantes,
-        "seleccionados": seleccionados,
+        "seleccionados": [],
         "notas": notas,
         "acuerdos": acuerdos,
         "form": form
@@ -200,18 +194,14 @@ def descarga(request):
 # Descargar PDF con integrantes, notas y acuerdos seleccionados
 def descargar_pdf(request):
     if request.method == "POST":
-        # IDs de notas y acuerdos seleccionados
+        integrantes_ids = request.POST.getlist('integrantes')
         notas_ids = request.POST.getlist('notas_seleccionadas')
         acuerdos_ids = request.POST.getlist('acuerdos_seleccionados')
 
+        integrantes = Integrante.objects.filter(id__in=integrantes_ids).order_by("area__nombre", "nombre_completo")
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
-        # Integrantes seleccionados
-        seleccionados_ids = request.session.get("integrantes_seleccionados", [])
-        integrantes = Integrante.objects.filter(id__in=seleccionados_ids).order_by("area__nombre", "nombre_completo")
-
-        # Crear PDF
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="historial.pdf"'
 

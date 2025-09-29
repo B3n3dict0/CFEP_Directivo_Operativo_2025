@@ -3,20 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const lista = document.getElementById("listaSeleccionados");
     const botonAgregar = document.getElementById("agregarSeleccionados");
     const mensajeVacio = document.getElementById("mensajeVacio");
-    const formGuardar = document.getElementById("formGuardarSeleccion");
+    const formDescargar = document.getElementById("formDescargarPDF");
 
     // Almacena los seleccionados para evitar duplicados
     const seleccionadosSet = new Set();
-    lista.querySelectorAll("li").forEach(li => {
-        if (li.dataset.id) seleccionadosSet.add(li.dataset.id);
-    });
 
     function actualizarMensaje() {
-        if (lista.querySelectorAll("li[data-id]").length === 0) {
-            mensajeVacio.style.display = "block";
-        } else {
-            mensajeVacio.style.display = "none";
-        }
+        const count = lista.querySelectorAll("li[data-id]").length;
+        mensajeVacio.style.display = count === 0 ? "block" : "none";
+        document.getElementById("contadorSeleccionados").textContent = `(${count})`;
     }
 
     actualizarMensaje();
@@ -26,12 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
         Array.from(select.selectedOptions).forEach(option => {
             const id = option.value;
             const texto = option.text;
-
             if (!seleccionadosSet.has(id)) {
                 seleccionadosSet.add(id);
                 const li = document.createElement("li");
                 li.dataset.id = id;
-                li.innerHTML = `${texto} <button class="eliminarBtn" type="button">Eliminar</button>`;
+                li.innerHTML = `${texto} <button class="eliminarBtn" type="button">✕</button>`;
                 lista.appendChild(li);
             }
         });
@@ -48,18 +42,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Preparar los inputs hidden al enviar el formulario
-    formGuardar.addEventListener("submit", function (e) {
-        // Eliminar inputs previos si los hay
-        formGuardar.querySelectorAll('input[name="integrantes"]').forEach(i => i.remove());
-
+    // Preparar inputs hidden al enviar el formulario de PDF
+    formDescargar.addEventListener("submit", function () {
+        // Eliminar inputs previos
+        formDescargar.querySelectorAll('input[name="integrantes"]').forEach(i => i.remove());
         // Crear un input hidden por cada seleccionado
         Array.from(lista.querySelectorAll("li[data-id]")).forEach(li => {
             const input = document.createElement("input");
             input.type = "hidden";
             input.name = "integrantes";
             input.value = li.dataset.id;
-            formGuardar.appendChild(input);
+            formDescargar.appendChild(input);
         });
     });
 });
