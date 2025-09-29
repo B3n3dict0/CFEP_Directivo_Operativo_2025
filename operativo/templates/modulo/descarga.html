@@ -72,16 +72,31 @@
     <div class="seccion seccion-notas">
       <h3>Notas</h3>
       <div class="contenedor-notas">
-        {% for nota in notas %}
-        <div class="nota-item">
-          <label>
-            <input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}">
-            <span class="nota-apartado">{{ nota.get_apartado_display }}</span> - 
-            <span class="nota-texto">{{ nota.texto }}</span>
-          </label>
-        </div>
+        {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
+        {% for grupo in notas_por_apartado %}
+          <div class="nota-grupo">
+            <h4>{{ grupo.grouper|title }}</h4> <!-- Apartado solo una vez -->
+            <table class="tabla-notas" border="1" cellspacing="0" cellpadding="5" width="100%">
+              <thead>
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Nota</th>
+                  <th>Fecha Creación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for nota in grupo.list %}
+                <tr>
+                  <td><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"></td>
+                  <td>{{ nota.texto }}</td>
+                  <td>{{ nota.fecha_creacion|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% empty %}
-        <p>No hay notas disponibles</p>
+          <p>No hay notas disponibles</p>
         {% endfor %}
       </div>
     </div>
