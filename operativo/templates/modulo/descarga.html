@@ -1,58 +1,92 @@
-<form method="post" action="{% url 'descargar_pdf' %}">
-    {% csrf_token %}
-    <h2>Historial de Notas</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Seleccionar</th>
-                <th>Apartado</th>
-                <th>Texto</th>
-                <th>Fecha Creación</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for nota in notas %}
-            <tr>
-                <td><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"></td>
-                <td>{{ nota.get_apartado_display }}</td>
-                <td>{{ nota.texto }}</td>
-                <td>{{ nota.fecha_creacion|date:"d/m/Y H:i" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Descargar PDF</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <script src="{% static 'js/integrantes.js' %}"></script>
+</head>
+<body>
+<div class="integrantes">
+  <h2>Seleccionar Integrantes</h2>
+  <div class="integrantes-grid">
 
-    <h2>Historial de Acuerdos</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Seleccionar</th>
-                <th>Número</th>
-                <th>Unidad</th>
-                <th>Acuerdo</th>
-                <th>Responsable</th>
-                <th>Fecha Límite</th>
-                <th>Pendiente</th>
-                <th>Avance</th>
-                <th>Fecha Creación</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for acuerdo in acuerdos %}
-            <tr>
-                <td><input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}"></td>
-                <td>{{ acuerdo.numerador }}</td>
-                <td>{{ acuerdo.unidad }}</td>
-                <td>{{ acuerdo.acuerdo }}</td>
-                <td>{{ acuerdo.responsable.nombre_completo }}</td>
-                <td>{{ acuerdo.fecha_limite|date:"d/m/Y" }}</td>
-                <td>{% if acuerdo.pendiente %}Sí{% else %}No{% endif %}</td>
-                <td>{{ acuerdo.porcentaje_avance }}%</td>
-                <td>{{ acuerdo.fecha_creacion|date:"d/m/Y H:i" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Columna izquierda: búsqueda y lista completa -->
+    <div class="columna-izquierda">
+      <div class="seccion-buscador">
+        <h3>Buscar Integrantes</h3>
+        <form method="get" class="buscador-form">
+          <div class="input-group">
+            <input type="text" name="q" placeholder="Buscar por nombre, puesto o área..." value="{{ request.GET.q }}" class="input-text">
+            <button type="submit" class="btn btn-buscar">🔍 Buscar</button>
+          </div>
+        </form>
+      </div>
 
-    <button type="submit" class="btn btn-primary">Descargar PDF</button>
-</form>
+      <div class="seccion-lista">
+        <h3>Lista de Integrantes Disponibles</h3>
+        <select id="integrantesSelect" multiple size="8" class="select-multiple">
+          {% for integrante in integrantes %}
+          <option value="{{ integrante.id }}">
+            {{ integrante.nombre_completo }} - {{ integrante.puesto }} ({{ integrante.area.nombre }})
+          </option>
+          {% empty %}
+          <option disabled>No hay integrantes disponibles</option>
+          {% endfor %}
+        </select>
+        <button type="button" id="agregarSeleccionados" class="btn-secundario">➕ Agregar Seleccionados</button>
+      </div>
+    </div>
+
+    <!-- Columna derecha: seleccionados y agregar nuevo -->
+    <div class="columna-derecha">
+      <div class="seccion-seleccionados">
+        <div class="seleccionados-header">
+          <h3>Integrantes Seleccionados</h3>
+          <span id="contadorSeleccionados" class="contador">({{ seleccionados|length }})</span>
+        </div>
+        <ul id="listaSeleccionados" class="lista-seleccionados">
+          {% for integrante in seleccionados %}
+          <li data-id="{{ integrante.id }}">
+            <span class="integrante-info"><strong>{{ integrante.nombre_completo }}</strong> <span class="integrante-detalles">{{ integrante.puesto }} • {{ integrante.area.nombre }}</span></span>
+            <button class="eliminarBtn btn-eliminar" type="button" title="Eliminar">✕</button>
+          </li>
+          {% empty %}
+          <li id="mensajeVacio" class="mensaje-vacio"><span>No hay integrantes seleccionados</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <form method="post" id="formGuardarSeleccion">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-guardar">💾 Guardar Seleccionados</button>
+      </form>
+
+      <div class="seccion-agregar">
+        <h3>Agregar Nuevo Integrante</h3>
+        <form method="post" class="agregar-form">
+          {% csrf_token %}
+          <div class="form-container">{{ form.as_p }}</div>
+          <button type="submit" name="agregar_integrante" class="btn btn-agregar">👥 Agregar Integrante</button>
+        </form>
+      </div>
+
+      <!-- Formulario de selección de notas y acuerdos para PDF -->
+      <form method="post" action="{% url 'descargar_pdf' %}">
+        {% csrf_token %}
+        <h3>Notas</h3>
+        {% for nota in notas %}
+          <label><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"> {{ nota.get_apartado_display }} - {{ nota.texto }}</label><br>
+        {% endfor %}
+        <h3>Acuerdos</h3>
+        {% for acuerdo in acuerdos %}
+          <label><input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}"> {{ acuerdo.numerador }}. {{ acuerdo.acuerdo }} ({{ acuerdo.responsable.nombre_completo }})</label><br>
+        {% endfor %}
+        <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

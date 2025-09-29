@@ -18,11 +18,21 @@ from .models import Nota, AcuerdoOperativo
 
 
 
-
-
 def operativo_view(request):
     fecha_actual = timezone.now()
     return render(request, "operativo/base.html", {"fecha_actual": fecha_actual})
+
+def historial_notas(request):
+    # Obtener todas las notas ordenadas por fecha (más reciente primero)
+    notas = Nota.objects.all().order_by('-fecha_creacion')
+    return render(request, 'modulo/historial_notas.html', {'notas': notas})
+
+def crear_acuerdo_operativo(request):
+    return render(request, 'modulo/crear_acuerdo_operativo.html')
+
+def historial_acuerdos(request):
+    return render(request, 'modulo/historial_acuerdo_operativa.html')
+
 
 # Vista unificada para mostrar y agregar integrantes
 def operativo_view(request):
@@ -79,16 +89,7 @@ def guardar_todo(request):
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'}, status=400)
 
-def historial_notas(request):
-    # Obtener todas las notas ordenadas por fecha (más reciente primero)
-    notas = Nota.objects.all().order_by('-fecha_creacion')
-    return render(request, 'modulo/historial_notas.html', {'notas': notas})
 
-def crear_acuerdo_operativo(request):
-    return render(request, 'modulo/crear_acuerdo_operativo.html')
-
-def historial_acuerdos(request):
-    return render(request, 'modulo/historial_acuerdo_operativa.html')
 
 
 #logica de crear acuerdo 
@@ -147,54 +148,70 @@ def historial_acuerdo_operativo(request):
     
 
 
+
+
+# Vista para seleccionar y mostrar integrantes en descarga
 def seleccionar_integrantes(request):
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
 
     if request.method == "POST":
-        # Tomar lista de IDs enviados desde el formulario oculto
-        seleccionados_ids = request.POST.getlist("integrantes")
-        request.session["integrantes_seleccionados"] = [str(i) for i in seleccionados_ids]
+        # IDs actuales en sesión
+        seleccionados_ids = request.session.get("integrantes_seleccionados", [])
+        # IDs nuevos enviados desde el formulario
+        nuevos_ids = request.POST.getlist("integrantes")
+        # Unir y evitar duplicados
+        seleccionados_ids = list(set(seleccionados_ids + nuevos_ids))
+        request.session["integrantes_seleccionados"] = seleccionados_ids
         return redirect("seleccionar_integrantes")
 
-    # Obtener seleccionados de la sesión
+    # Seleccionados de la sesión
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
     seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
-    return render(request, "modulo/integrantes.html", {
+    form = IntegranteForm()
+    return render(request, "modulo/descarga.html", {
         "integrantes": integrantes,
         "seleccionados": seleccionados,
+        "form": form
     })
 
 
+# Vista para mostrar la página de descarga
 def descarga(request):
-    # Tomar solo los integrantes seleccionados de la sesión
+    # Todos los integrantes
+    integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
+    # Seleccionados en sesión
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
-    integrantes = Integrante.objects.filter(id__in=seleccionados_ids).order_by("area__nombre", "nombre_completo")
-
+    seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
+    # Notas y acuerdos
     notas = Nota.objects.all().order_by("fecha_creacion")
     acuerdos = AcuerdoOperativo.objects.all().order_by("fecha_creacion")
 
-    context = {
+    form = IntegranteForm()
+    return render(request, "modulo/descarga.html", {
         "integrantes": integrantes,
+        "seleccionados": seleccionados,
         "notas": notas,
         "acuerdos": acuerdos,
-    }
-    return render(request, "modulo/descarga.html", context)
+        "form": form
+    })
 
 
-
-
+# Descargar PDF con integrantes, notas y acuerdos seleccionados
 def descargar_pdf(request):
     if request.method == "POST":
-        # Obtener los IDs seleccionados desde el form
+        # IDs de notas y acuerdos seleccionados
         notas_ids = request.POST.getlist('notas_seleccionadas')
         acuerdos_ids = request.POST.getlist('acuerdos_seleccionados')
 
-        # Filtrar los objetos según los IDs seleccionados
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
-        # Crear el PDF en memoria
+        # Integrantes seleccionados
+        seleccionados_ids = request.session.get("integrantes_seleccionados", [])
+        integrantes = Integrante.objects.filter(id__in=seleccionados_ids).order_by("area__nombre", "nombre_completo")
+
+        # Crear PDF
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="historial.pdf"'
 
@@ -202,7 +219,24 @@ def descargar_pdf(request):
         ancho, alto = letter
         y = alto - inch
 
-        # Sección de Notas
+        # Integrantes
+        pdf.setFont("Helvetica-Bold", 14)
+        pdf.drawString(inch, y, "Integrantes Seleccionados")
+        y -= 0.5 * inch
+        pdf.setFont("Helvetica", 12)
+        if integrantes.exists():
+            for i in integrantes:
+                pdf.drawString(inch, y, f"{i.nombre_completo} - {i.puesto} ({i.area.nombre})")
+                y -= 0.25 * inch
+                if y < inch:
+                    pdf.showPage()
+                    y = alto - inch
+        else:
+            pdf.drawString(inch, y, "No hay integrantes seleccionados")
+            y -= 0.25 * inch
+
+        # Notas
+        y -= 0.3 * inch
         pdf.setFont("Helvetica-Bold", 14)
         pdf.drawString(inch, y, "Notas Seleccionadas")
         y -= 0.5 * inch
@@ -214,7 +248,7 @@ def descargar_pdf(request):
                 pdf.showPage()
                 y = alto - inch
 
-        # Sección de Acuerdos
+        # Acuerdos
         y -= 0.3 * inch
         pdf.setFont("Helvetica-Bold", 14)
         pdf.drawString(inch, y, "Acuerdos Seleccionados")
@@ -231,5 +265,4 @@ def descargar_pdf(request):
         pdf.save()
         return response
 
-    else:
-        return HttpResponse("Método no permitido", status=405)
+    return HttpResponse("Método no permitido", status=405)
