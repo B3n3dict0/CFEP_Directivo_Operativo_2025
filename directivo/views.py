@@ -12,6 +12,7 @@ from docx2pdf import convert
 from operativo.models import Integrante, Nota  # Compartidos
 from .models import AcuerdoDirectivo
 from .forms import IntegranteForm, NotaForm
+from directivo import models
 
 # View principal de directivo
 def directivo_view(request):

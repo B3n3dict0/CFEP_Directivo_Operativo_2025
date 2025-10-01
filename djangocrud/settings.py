@@ -135,8 +135,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-  # Tu carpeta static principal
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "operativo", "static"),  # imágenes y recursos de operativo
+    os.path.join(BASE_DIR, "directivo", "static"), 
 ]
 
 LOGIN_URL = '/signin'

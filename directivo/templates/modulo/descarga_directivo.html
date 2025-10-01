@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Descargar PDF - Directivo</title>
+    <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
+</head>
+<body>
+<div class="integrantes">
+
+  <h2>Seleccionar Integrantes</h2>
+
+  <div class="integrantes-grid">
+
+    <!-- Columna izquierda: búsqueda y lista -->
+    <div class="columna-izquierda">
+      <div class="seccion seccion-buscador">
+        <h3>Buscar Integrantes</h3>
+        <form method="get" class="buscador-form">
+          <div class="input-group">
+            <input type="text" name="q" placeholder="Buscar por nombre, puesto o área..." value="{{ request.GET.q }}" class="input-text">
+            <button type="submit" class="btn btn-buscar">🔍 Buscar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="seccion seccion-lista">
+        <h3>Lista de Integrantes Disponibles</h3>
+        <select id="integrantesSelect" multiple size="8" class="select-multiple">
+          {% for integrante in integrantes %}
+          <option value="{{ integrante.id }}">
+            {{ integrante.nombre_completo }} - {{ integrante.puesto }} ({{ integrante.area.nombre }})
+          </option>
+          {% empty %}
+          <option disabled>No hay integrantes disponibles</option>
+          {% endfor %}
+        </select>
+        <button type="button" id="agregarSeleccionados" class="btn-secundario">➕ Agregar Seleccionados</button>
+      </div>
+    </div>
+
+    <!-- Columna derecha: seleccionados y agregar -->
+    <div class="columna-derecha">
+      <div class="seccion seccion-seleccionados">
+        <div class="seleccionados-header">
+          <h3>Integrantes Seleccionados</h3>
+          <span id="contadorSeleccionados" class="contador">(0)</span>
+        </div>
+        <ul id="listaSeleccionados" class="lista-seleccionados">
+          <li id="mensajeVacio" class="mensaje-vacio"><span>No hay integrantes seleccionados</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Formulario descarga PDF con Notas y Acuerdos Directivos -->
+  <form method="post" action="{% url 'descargar_pdf_directivo' %}" id="formDescargarPDF">
+    {% csrf_token %}
+    <div id="inputsIntegrantes"></div>
+
+    <!-- Sección Notas Directivas -->
+    <div class="seccion seccion-notas">
+      <h3>Notas</h3>
+      <div class="contenedor-notas">
+        {% regroup notas_directivo|dictsort:"apartado" by apartado as notas_por_apartado %}
+        {% for grupo in notas_por_apartado %}
+          <div class="nota-grupo">
+            <h4>{{ grupo.grouper|title }}</h4>
+            <table class="tabla-notas" border="1" cellspacing="0" cellpadding="5" width="100%">
+              <thead>
+                <tr>
+                  <th>Seleccionar</th>
+                  <th>Nota</th>
+                  <th>Fecha Creación</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for nota in grupo.list %}
+                <tr>
+                  <td><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"></td>
+                  <td>{{ nota.texto }}</td>
+                  <td>{{ nota.fecha_creacion|date:"d/m/Y" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% empty %}
+          <p>No hay notas disponibles</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Sección Acuerdos Directivos -->
+    <div class="seccion seccion-acuerdos">
+      <h3>Acuerdos</h3>
+      <div class="contenedor-acuerdos">
+        {% for acuerdo in acuerdos_directivo %}
+        <div class="acuerdo-item">
+          <label>
+            <input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}">
+            <span class="acuerdo-numero">{{ acuerdo.numerador }}</span>. 
+            <span class="acuerdo-texto">{{ acuerdo.acuerdo }}</span> 
+            (<span class="acuerdo-responsable">{{ acuerdo.responsable.nombre_completo }}</span>)
+          </label>
+        </div>
+        {% empty %}
+        <p>No hay acuerdos disponibles</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
+  </form>
+
+</div>
+
+<script src="{% static 'js/integrantes_directivo.js' %}" defer></script>
+</body>
+</html>

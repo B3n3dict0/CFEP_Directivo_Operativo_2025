@@ -1,20 +1,27 @@
 from datetime import date
 import json
 import io
+import os
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-from django.template.loader import render_to_string
 from django.utils import timezone
-
-from xhtml2pdf import pisa
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from PyPDF2 import PdfReader, PdfWriter
-
 from directivo import models
+from djangocrud import settings
 from .forms import IntegranteForm, NotaForm
 from .models import AcuerdoOperativo, Integrante, Nota
+import io
+from datetime import date
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from .models import Integrante, Nota, AcuerdoOperativo 
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import Paragraph
 
 
 def operativo_view(request):
@@ -158,44 +165,190 @@ def descarga(request):
     })
 
 
+
+
+
+
+
+
+
+
+# --- Función para buscar imágenes en STATICFILES_DIRS ---
+def buscar_imagen(nombre_archivo):
+    for carpeta in settings.STATICFILES_DIRS:
+        ruta = os.path.join(carpeta, "img", nombre_archivo)
+        if os.path.exists(ruta):
+            return ruta
+    return None  # Devuelve None si no se encuentra
+
+
+
+
+def encabezado_y_pie(canvas, doc):
+    # Ruta de tu imagen de encabezado
+    encabezado = buscar_imagen("encabezado.jpg")  # tu imagen combinada
+
+    if encabezado:
+        img = ImageReader(encabezado)
+        ancho_original, alto_original = img.getSize()
+        ancho_pdf = A4[0] - 2*cm  # ancho total menos márgenes
+        escala = ancho_pdf / ancho_original
+        alto_final = alto_original * escala
+
+        # Dibujar la imagen en la parte superior
+        canvas.drawImage(
+            encabezado,
+            1*cm,            # margen izquierdo
+            A4[1] - alto_final - 1*cm,  # altura desde el borde superior
+            width=ancho_pdf,
+            height=alto_final,
+            preserveAspectRatio=True,
+            mask='auto'
+        )
+
+    # --- Pie de página ---
+    canvas.setStrokeColor(colors.grey)
+    canvas.line(1*cm, 2*cm, 20*cm, 2*cm)
+
+    page_num = canvas.getPageNumber()
+    canvas.setFont("Helvetica", 9)
+    canvas.drawRightString(20*cm, 1.2*cm, f"Página {page_num}")
+
+# --- Vista para generar PDF ---
 def descargar_pdf(request):
     if request.method == "POST":
-        # Obtener IDs seleccionados desde el formulario
+        # Obtener datos seleccionados
         notas_ids = request.POST.getlist("notas_seleccionadas")
         acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
-        integrantes_ids = request.POST.getlist("integrantes")  # agregar en tu form hidden inputs si es necesario
+        integrantes_ids = request.POST.getlist("integrantes")
 
-        # Consultar objetos en la base de datos
+        # Consultar BD
         integrantes = Integrante.objects.filter(id__in=integrantes_ids)
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
-        # Preparar los textos para la plantilla
         fecha = date.today().strftime("%d/%m/%Y")
-        txt_integrantes = "\n".join([f"{i+1}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes)])
-        txt_notas = "\n".join([f"{i+1}. {x.get_apartado_display()} - {x.texto}" for i, x in enumerate(notas)])
-        txt_acuerdos = "\n".join([f"{i+1}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})" for i, x in enumerate(acuerdos)])
 
-        # Contexto para la plantilla
-        context = {
-            "FECHA": fecha,
-            "INTEGRANTES": txt_integrantes,
-            "NOTAS": txt_notas,
-            "ACUERDOS": txt_acuerdos,
-        }
+        # --- Preparar contenido PDF ---
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                                leftMargin=2*cm, rightMargin=2*cm,
+                                topMargin=5*cm, bottomMargin=3*cm)
 
-        # Renderizar HTML desde imprimir.html
-        html_string = render_to_string("modulo/imprimir.html", context)
+        elementos = []
+        styles = getSampleStyleSheet()
+        normal = styles["Normal"]
+        normal.fontSize = 10
+        heading = styles["Heading3"]
+        heading.fontSize = 12
 
-        # Generar PDF
+        # --- Título principal ---
+        titulo = [[Paragraph('<font color="white"><b>MINUTA DE REUNIÓN</b></font>', normal)]]
+        tabla_titulo = Table(titulo, colWidths=[doc.width])
+        tabla_titulo.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,-1), colors.black),
+            ("ALIGN", (0,0), (-1,-1), "CENTER"),
+            ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+            ("FONTSIZE", (0,0), (-1,-1), 14),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_titulo)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 1: Datos Generales ---
+        datos_generales = [
+            [Paragraph("MINUTA DE REUNIÓN", normal), Paragraph("Reunión Operativa Central Felipe Carrillo Puerto", normal)],
+            [Paragraph("Lugar:", normal), Paragraph("Sala de Juntas de la Central FCP", normal), Paragraph("Fecha y Horario:", normal), Paragraph(fecha, normal)],
+        ]
+        tabla_datos = Table(datos_generales, colWidths=[doc.width*0.25, doc.width*0.35, doc.width*0.2, doc.width*0.2])
+        tabla_datos.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+        ]))
+        elementos.append(tabla_datos)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 2: Objetivo, Importancia y Participantes ---
+        tabla_objetivo_importancia = [
+            [Paragraph("<b>Objetivo(s)</b>", normal)],
+            [Paragraph("PROPÓSITO: Informar el estado de las unidades, proporcionar la problemática prioritaria de las áreas operativas e informar el avance de los programas de mantenimiento.", normal)],
+            [Paragraph("IMPORTANCIA: Que el personal oriente sus actividades a la solución de las necesidades prioritarias para mantener las unidades operando en forma confiable y segura, además de informar el avance de los proyectos de mantenimiento.", normal)],
+            [Paragraph("<b>Participantes</b>", normal)],
+            [Paragraph(", ".join([f"{i}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes, start=1)]), normal)],
+        ]
+        tabla_obj_imp = Table(tabla_objetivo_importancia, colWidths=[doc.width])
+        tabla_obj_imp.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+        ]))
+        elementos.append(tabla_obj_imp)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 3: Orden del Día ---
+        orden_dia = [
+            ["1. ESTADO DE LAS UNIDADES …\nSEGUIMIENTO A REGIMEN TERMICO …\nSeguimiento Operativo Anomalías FCP\nAvisos de operación y química\nManiobras de riesgo", "Producción"],
+            ["2. Seguimiento de actividades que originaron salida …\nAvance del proyecto de mantenimiento\nAvisos de mantenimiento predictivo\nActividades de riesgo", "Mantenimiento"],
+            ["3. Avisos de atención inmediata relacionados con aspectos de seguridad", "Seguridad"],
+            ["4. Eventos que afecten condiciones de seguridad", "Seguridad"],
+            ["5. Eventos que afecten condiciones ambientales", "Ambiental"],
+            ["6. Presentación de problemática y solución en materia de seguridad", "Seguridad"],
+            ["7. Presentación de problemática y solución en materia ambiental", "Ambiental"],
+            ["8. Revisión de Acuerdos Anteriores\nSeguimiento Operativo Anomalías FCP", "Calidad"],
+            ["9. Creación de Acuerdos Nuevos\nSeguimiento Operativo Anomalías Central FCP", "Todos"],
+            ["10. Ratificación de Actividades Prioritarias del Día", "Superintendencia General"],
+        ]
+        tabla_orden = Table(orden_dia, colWidths=[doc.width*0.7, doc.width*0.3])
+        tabla_orden.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_orden)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 4: Desarrollo ---
+        desarrollo_list = [[Paragraph(f"{i}. {x.get_apartado_display()} - {x.texto}", normal)] for i, x in enumerate(notas, start=1)]
+        tabla_desarrollo = Table([[Paragraph("<b>Desarrollo</b>", normal)]] + desarrollo_list, colWidths=[doc.width])
+        tabla_desarrollo.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_desarrollo)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 5: Compromisos y Acuerdos ---
+        acuerdos_list = [[Paragraph(f"{i}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})", normal)] for i, x in enumerate(acuerdos, start=1)]
+        tabla_acuerdos = Table([[Paragraph("<b>Compromisos y Acuerdos</b>", normal)]] + acuerdos_list, colWidths=[doc.width])
+        tabla_acuerdos.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_acuerdos)
+        elementos.append(Spacer(1, 12))
+
+        # --- Generar PDF ---
+        doc.build(elementos, onFirstPage=encabezado_y_pie, onLaterPages=encabezado_y_pie)
+
+        pdf = buffer.getvalue()
+        buffer.close()
+
         response = HttpResponse(content_type="application/pdf")
-        response['Content-Disposition'] = 'attachment; filename="Minuta_Reunion.pdf"'
-
-        pisa_status = pisa.CreatePDF(io.BytesIO(html_string.encode("UTF-8")), dest=response)
-
-        if pisa_status.err:
-            return HttpResponse(f"Error al generar el PDF <pre>{html_string}</pre>")
-
+        response["Content-Disposition"] = 'attachment; filename="Minuta_Reunion.pdf"'
+        response.write(pdf)
         return response
 
     return HttpResponse("Método no permitido", status=405)
