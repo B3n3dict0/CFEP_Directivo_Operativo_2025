@@ -10,7 +10,7 @@
         └── desarrollo.html
     -->
 
-    {% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{% static 'css/encabezado.css' %}" />
     <link rel="stylesheet" href="{% static 'css/informacion.css' %}" />
     <link rel="stylesheet" href="{% static 'css/integrantes.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/desarrollo.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/desarrollo_directivo.css' %}" />
 </head>
 <body>
 
@@ -30,10 +30,6 @@
 
     {% block informacion %}
         {% include "directivo/partials/informacion.html" %}
-    {% endblock %}
-
-    {% block integrantes %}
-        {% include "directivo/partials/integrantes.html" %}
     {% endblock %}
 
     {% block desarrollo %}

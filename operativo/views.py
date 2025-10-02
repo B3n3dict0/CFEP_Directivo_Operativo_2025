@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from reportlab.lib.pagesizes import letter
-from directivo import models
+from operativo import models
 from djangocrud import settings
 from .forms import IntegranteForm, NotaForm
 from .models import AcuerdoOperativo, Integrante, Nota
@@ -352,3 +352,4 @@ def descargar_pdf(request):
         return response
 
     return HttpResponse("Método no permitido", status=405)
+

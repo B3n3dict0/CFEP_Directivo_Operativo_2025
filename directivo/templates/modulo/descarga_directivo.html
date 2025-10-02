@@ -2,28 +2,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descargar PDF - Directivo</title>
+    <title>Descargar PDF - Directiva</title>
     <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
 <div class="integrantes">
 
-  <h2>Seleccionar Integrantes</h2>
+  <h2>Seleccionar Integrantes - Directiva</h2>
 
   <div class="integrantes-grid">
 
-    <!-- Columna izquierda: búsqueda y lista -->
+    <!-- Columna izquierda -->
     <div class="columna-izquierda">
-      <div class="seccion seccion-buscador">
-        <h3>Buscar Integrantes</h3>
-        <form method="get" class="buscador-form">
-          <div class="input-group">
-            <input type="text" name="q" placeholder="Buscar por nombre, puesto o área..." value="{{ request.GET.q }}" class="input-text">
-            <button type="submit" class="btn btn-buscar">🔍 Buscar</button>
-          </div>
-        </form>
-      </div>
-
       <div class="seccion seccion-lista">
         <h3>Lista de Integrantes Disponibles</h3>
         <select id="integrantesSelect" multiple size="8" class="select-multiple">
@@ -39,7 +29,7 @@
       </div>
     </div>
 
-    <!-- Columna derecha: seleccionados y agregar -->
+    <!-- Columna derecha -->
     <div class="columna-derecha">
       <div class="seccion seccion-seleccionados">
         <div class="seleccionados-header">
@@ -54,16 +44,16 @@
 
   </div>
 
-  <!-- Formulario descarga PDF con Notas y Acuerdos Directivos -->
-  <form method="post" action="{% url 'descargar_pdf_directivo' %}" id="formDescargarPDF">
+  <!-- Formulario descarga PDF -->
+  <form method="post" action="{% url 'directivo_exportar_pdf' %}" id="formDescargarPDF">
     {% csrf_token %}
     <div id="inputsIntegrantes"></div>
 
-    <!-- Sección Notas Directivas -->
+    <!-- Notas Directiva -->
     <div class="seccion seccion-notas">
-      <h3>Notas</h3>
+      <h3>Notas Directiva</h3>
       <div class="contenedor-notas">
-        {% regroup notas_directivo|dictsort:"apartado" by apartado as notas_por_apartado %}
+        {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
         {% for grupo in notas_por_apartado %}
           <div class="nota-grupo">
             <h4>{{ grupo.grouper|title }}</h4>
@@ -92,11 +82,11 @@
       </div>
     </div>
 
-    <!-- Sección Acuerdos Directivos -->
+    <!-- Acuerdos Directiva -->
     <div class="seccion seccion-acuerdos">
-      <h3>Acuerdos</h3>
+      <h3>Acuerdos Directiva</h3>
       <div class="contenedor-acuerdos">
-        {% for acuerdo in acuerdos_directivo %}
+        {% for acuerdo in acuerdos %}
         <div class="acuerdo-item">
           <label>
             <input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}">
@@ -111,11 +101,10 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
+    <button type="submit" class="btn btn-descargar">📄 Descargar PDF Directiva</button>
   </form>
 
 </div>
-
-<script src="{% static 'js/integrantes_directivo.js' %}" defer></script>
+  <script src="{% static 'js/integrantes_directivo.js' %}" defer></script>
 </body>
 </html>

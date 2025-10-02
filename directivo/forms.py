@@ -1,7 +1,8 @@
-
 from django import forms
-from .models import Integrante, Area
-from .models import Nota
+# Importar los modelos compartidos desde operativo
+from operativo.models import Integrante, Area
+# Importar los modelos específicos de directivo
+from .models import NotaDirectivo
 
 class IntegranteForm(forms.ModelForm):
     class Meta:
@@ -13,10 +14,11 @@ class AreaForm(forms.ModelForm):
         model = Area
         fields = ['nombre']
 
-class NotaForm(forms.ModelForm):
+class NotaDirectivoForm(forms.ModelForm):
     class Meta:
-        model = Nota
+        model = NotaDirectivo
         fields = ['apartado', 'texto']
         widgets = {
-            'texto': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
+            'texto': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Escribe tu nota aquí...'}),
+            'apartado': forms.HiddenInput()
         }

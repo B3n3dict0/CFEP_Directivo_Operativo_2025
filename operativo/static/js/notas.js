@@ -11,13 +11,25 @@ document.addEventListener("DOMContentLoaded", function () {
         superintendencia: []
     };
 
+    // Variable para saber si estamos editando
+    let editando = { apartado: null, index: null };
+
     // Inicialmente ocultar el formulario
     formulario.style.display = 'none';
 
     // Mostrar formulario
-    window.mostrarFormulario = function(apartado) {
+    window.mostrarFormulario = function(apartado, index = null) {
         formulario.style.display = 'block';
         inputApartado.value = apartado;
+
+        // Si estamos editando, cargar el texto
+        if(index !== null) {
+            textarea.value = notasTemporales[apartado][index];
+            editando = { apartado, index };
+        } else {
+            textarea.value = '';
+            editando = { apartado: null, index: null };
+        }
 
         formulario.style.position = 'fixed';
         formulario.style.top = '50%';
@@ -35,22 +47,49 @@ document.addEventListener("DOMContentLoaded", function () {
     window.cerrarFormulario = function() {
         formulario.style.display = 'none';
         textarea.value = '';
+        editando = { apartado: null, index: null };
     }
 
-    // Guardar nota temporal
+    // Guardar nota temporal o actualizar
     window.agregarNotaTemporal = function() {
         const apartado = inputApartado.value;
         const texto = textarea.value.trim();
         if(texto === '') return false;
 
-        // Guardar en array temporal
-        notasTemporales[apartado].push(texto);
-
-        // Mostrar en el contenedor correspondiente
         const contenedor = document.getElementById(`notas-temporales-${apartado}`);
+
+        // Si estamos editando
+        if(editando.index !== null) {
+            // Actualizar array
+            notasTemporales[apartado][editando.index] = texto;
+            // Actualizar HTML
+            const div = contenedor.children[editando.index];
+            div.querySelector('span').textContent = texto + ' (Temporal)';
+            cerrarFormulario();
+            return false;
+        }
+
+        // Si es una nueva nota
+        const index = notasTemporales[apartado].push(texto) - 1;
+
         const div = document.createElement('div');
         div.classList.add('nota-item');
-        div.textContent = texto + ' (Temporal)';
+
+        const span = document.createElement('span');
+        span.textContent = texto + ' (Temporal)';
+
+        // Botón modificar
+        const btnModificar = document.createElement('button');
+        btnModificar.textContent = 'Modificar';
+        btnModificar.classList.add('btn-editar');
+        btnModificar.style.marginLeft = '10px';
+
+        btnModificar.addEventListener('click', function() {
+            mostrarFormulario(apartado, index);
+        });
+
+        div.appendChild(span);
+        div.appendChild(btnModificar);
         contenedor.appendChild(div);
 
         cerrarFormulario();
@@ -64,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const csrfTokenElem = document.querySelector('[name=csrfmiddlewaretoken]');
         const csrfToken = csrfTokenElem ? csrfTokenElem.value : '';
-        const url = formGuardarTodo.dataset.url; // URL de la view pasada desde HTML
+        const url = formGuardarTodo.dataset.url;
 
         // Preparar payload
         const payload = [];
