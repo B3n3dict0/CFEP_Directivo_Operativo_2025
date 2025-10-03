@@ -70,7 +70,7 @@
 
     <!-- Sección Notas -->
     <div class="seccion seccion-notas">
-      <h3>Notas Directivo</h3>
+      <h3>Notas</h3>
       <div class="contenedor-notas">
         {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
         {% for grupo in notas_por_apartado %}
@@ -103,7 +103,7 @@
 
     <!-- Sección Acuerdos -->
     <div class="seccion seccion-acuerdos">
-      <h3>Acuerdos Directivo</h3>
+      <h3>Acuerdos</h3>
       <div class="contenedor-acuerdos">
         {% for acuerdo in acuerdos %}
         <div class="acuerdo-item">

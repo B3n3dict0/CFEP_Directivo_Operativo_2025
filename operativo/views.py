@@ -181,9 +181,6 @@ def buscar_imagen(nombre_archivo):
             return ruta
     return None  # Devuelve None si no se encuentra
 
-
-
-
 def encabezado_y_pie(canvas, doc):
     # Ruta de tu imagen de encabezado
     encabezado = buscar_imagen("encabezado.jpg")  # tu imagen combinada

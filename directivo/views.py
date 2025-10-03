@@ -72,23 +72,21 @@ def editar_nota_directivo(request, nota_id):
             return redirect('directivo_index')
     else:
         form = NotaDirectivoForm(instance=nota)
-    return render(request, 'directivo/partials/editar_nota.html', {'form': form, 'nota': nota})
+    return render(request, 'directivo/partials/desarrollo.html', {'form': form, 'nota': nota})
 
 
-@csrf_exempt
 def guardar_todo_directivo(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            notas = data.get("notas", [])
+            notas = data.get('notas', [])
             for n in notas:
-                # Guardar solo si tiene texto
-                if n.get("texto", "").strip():
-                    NotaDirectivo.objects.create(apartado=n["apartado"], texto=n["texto"])
-            return JsonResponse({"status": "ok"})
+                if 'apartado' in n and 'texto' in n:
+                    NotaDirectivo.objects.create(apartado=n['apartado'], texto=n['texto'])
+            return JsonResponse({'status': 'ok'})
         except Exception as e:
-            return JsonResponse({"status": "error", "msg": str(e)}, status=400)
-    return JsonResponse({"status": "error"}, status=400)
+            return JsonResponse({'status': 'error', 'msg': str(e)}, status=400)
+    return JsonResponse({'status': 'error'}, status=400)
 
 
 # ---------------- REGLAS ----------------
@@ -155,7 +153,7 @@ def seleccionar_integrantes_directivo(request):
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
     seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
-    return render(request, "modulo/integrantes_directivo.html", {
+    return render(request, "modulo/descarga_directivo.html", {
         "integrantes": integrantes,
         "seleccionados": seleccionados,
     })
@@ -213,19 +211,21 @@ def encabezado_y_pie(canvas, doc):
     canvas.setFont("Helvetica", 9)
     canvas.drawRightString(20*cm, 1.2*cm, f"Página {page_num}")
 
-
 def descargar_pdf_directiva(request):
     if request.method == "POST":
+        # --- Obtener datos del POST ---
         notas_ids = request.POST.getlist("notas_seleccionadas")
         acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
         integrantes_ids = request.POST.getlist("integrantes")
 
+        # --- Consultar base de datos ---
         integrantes = Integrante.objects.filter(id__in=integrantes_ids)
         notas = NotaDirectivo.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoDirectivo.objects.filter(id__in=acuerdos_ids)
 
         fecha = date.today().strftime("%d/%m/%Y")
 
+        # --- Preparar PDF ---
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=A4,
                                 leftMargin=2*cm, rightMargin=2*cm,
@@ -235,15 +235,108 @@ def descargar_pdf_directiva(request):
         styles = getSampleStyleSheet()
         normal = styles["Normal"]
         normal.fontSize = 10
-
         heading = styles["Heading3"]
         heading.fontSize = 12
 
-        # Aquí va tu lógica de tablas PDF igual que antes
+        # --- Título principal ---
+        titulo = [[Paragraph('<font color="white"><b>MINUTA DE REUNIÓN DIRECTIVA</b></font>', normal)]]
+        tabla_titulo = Table(titulo, colWidths=[doc.width])
+        tabla_titulo.setStyle(TableStyle([
+            ("BACKGROUND", (0,0), (-1,-1), colors.black),
+            ("ALIGN", (0,0), (-1,-1), "CENTER"),
+            ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+            ("FONTSIZE", (0,0), (-1,-1), 14),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_titulo)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 1: Datos Generales ---
+        datos_generales = [
+            [Paragraph("MINUTA DE REUNIÓN", normal), Paragraph("Reunión Directiva Central FCP", normal)],
+            [Paragraph("Lugar:", normal), Paragraph("Sala de Juntas de la Central FCP", normal),
+             Paragraph("Fecha y Horario:", normal), Paragraph(fecha, normal)],
+        ]
+        tabla_datos = Table(datos_generales, colWidths=[doc.width*0.25, doc.width*0.35, doc.width*0.2, doc.width*0.2])
+        tabla_datos.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+        ]))
+        elementos.append(tabla_datos)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 2: Objetivo, Importancia y Participantes ---
+        tabla_objetivo_importancia = [
+            [Paragraph("<b>Objetivo(s)</b>", normal)],
+            [Paragraph("PROPÓSITO: Informar el estado general de las áreas directivas y decisiones estratégicas prioritarias.", normal)],
+            [Paragraph("IMPORTANCIA: Que el personal oriente sus actividades a la solución de necesidades estratégicas para la organización.", normal)],
+            [Paragraph("<b>Participantes</b>", normal)],
+            [Paragraph(", ".join([f"{i}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes, start=1)]), normal)],
+        ]
+        tabla_obj_imp = Table(tabla_objetivo_importancia, colWidths=[doc.width])
+        tabla_obj_imp.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+            ("TOPPADDING", (0,0), (-1,-1), 4),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+        ]))
+        elementos.append(tabla_obj_imp)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 3: Orden del Día (adaptado para Directiva) ---
+        orden_dia = [
+            ["1. Revisión de metas estratégicas y resultados trimestrales", "Dirección"],
+            ["2. Seguimiento de proyectos clave", "Proyectos"],
+            ["3. Discusión de presupuestos y asignaciones", "Finanzas"],
+            ["4. Presentación de decisiones anteriores y acuerdos", "Todos"],
+        ]
+        tabla_orden = Table(orden_dia, colWidths=[doc.width*0.7, doc.width*0.3])
+        tabla_orden.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_orden)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 4: Desarrollo ---
+        desarrollo_list = [[Paragraph(f"{i}. {x.get_apartado_display()} - {x.texto}", normal)] for i, x in enumerate(notas, start=1)]
+        tabla_desarrollo = Table([[Paragraph("<b>Desarrollo</b>", normal)]] + desarrollo_list, colWidths=[doc.width])
+        tabla_desarrollo.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_desarrollo)
+        elementos.append(Spacer(1, 12))
+
+        # --- Tabla 5: Compromisos y Acuerdos ---
+        acuerdos_list = [[Paragraph(f"{i}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})", normal)] for i, x in enumerate(acuerdos, start=1)]
+        tabla_acuerdos = Table([[Paragraph("<b>Compromisos y Acuerdos</b>", normal)]] + acuerdos_list, colWidths=[doc.width])
+        tabla_acuerdos.setStyle(TableStyle([
+            ("GRID", (0,0), (-1,-1), 1, colors.black),
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 6),
+            ("RIGHTPADDING", (0,0), (-1,-1), 6),
+        ]))
+        elementos.append(tabla_acuerdos)
+        elementos.append(Spacer(1, 12))
+
+        # --- Generar PDF ---
         doc.build(elementos, onFirstPage=encabezado_y_pie, onLaterPages=encabezado_y_pie)
 
         pdf = buffer.getvalue()
         buffer.close()
+
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="Minuta_Reunion_Directiva.pdf"'
         response.write(pdf)

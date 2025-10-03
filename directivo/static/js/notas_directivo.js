@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById('directivo-texto-nota');
     const inputApartado = document.getElementById('directivo-id-apartado');
 
-    // Objeto para almacenar notas temporales
     const notasTemporales = {
         produccion: [],
         mantenimiento: [],
@@ -12,18 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
         superintendencia: []
     };
 
-    // Variable para saber si estamos editando
     let editando = { apartado: null, index: null };
-
-    // Inicialmente ocultar el formulario
     formulario.style.display = 'none';
 
-    // Mostrar formulario
     window.directivoMostrarFormulario = function(apartado, index = null) {
         formulario.style.display = 'block';
         inputApartado.value = apartado;
 
-        // Si estamos editando, cargar el texto
         if(index !== null) {
             textarea.value = notasTemporales[apartado][index];
             editando = { apartado, index };
@@ -44,14 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
         formulario.style.zIndex = '1000';
     }
 
-    // Cerrar formulario
     window.directivoCerrarFormulario = function() {
         formulario.style.display = 'none';
         textarea.value = '';
         editando = { apartado: null, index: null };
     }
 
-    // Agregar o actualizar nota temporal
     window.directivoAgregarNotaTemporal = function() {
         const apartado = inputApartado.value;
         const texto = textarea.value.trim();
@@ -59,27 +51,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const contenedor = document.getElementById(`notas-temporales-${apartado}`);
 
-        // Si estamos editando
         if(editando.index !== null) {
-            // Actualizar array
             notasTemporales[apartado][editando.index] = texto;
-            // Actualizar HTML
             const div = contenedor.children[editando.index];
             div.querySelector('span').textContent = texto + ' (Temporal)';
             directivoCerrarFormulario();
             return false;
         }
 
-        // Si es una nueva nota
         const index = notasTemporales[apartado].push(texto) - 1;
-
         const div = document.createElement('div');
         div.classList.add('nota-item');
 
         const span = document.createElement('span');
         span.textContent = texto + ' (Temporal)';
 
-        // Botón modificar
         const btnModificar = document.createElement('button');
         btnModificar.textContent = 'Modificar';
         btnModificar.classList.add('btn-editar');
@@ -93,10 +79,9 @@ document.addEventListener("DOMContentLoaded", function () {
         contenedor.appendChild(div);
 
         directivoCerrarFormulario();
-        return false; // Evitar submit real
+        return false;
     }
 
-    // Enviar todas las notas temporales al servidor
     const formGuardarTodo = document.getElementById('directivo-guardar-todo-form');
     formGuardarTodo.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -105,7 +90,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const csrfToken = csrfTokenElem ? csrfTokenElem.value : '';
         const url = formGuardarTodo.dataset.url;
 
-        // Preparar payload
         const payload = [];
         for(let key in notasTemporales){
             notasTemporales[key].forEach(texto => {
@@ -113,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        if(payload.length === 0) return; // nada que guardar
+        if(payload.length === 0) return;
 
         fetch(url, {
             method: 'POST',
@@ -125,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(res => {
             if(res.ok){
-                location.reload(); // recargar la página con las notas guardadas
+                location.reload();
             } else {
                 alert("Error al guardar las notas.");
             }
