@@ -2,18 +2,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descargar PDF - Directiva</title>
+    <title>Descargar PDF - Directivo</title>
     <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
 <div class="integrantes">
 
-  <h2>Seleccionar Integrantes - Directiva</h2>
+  <h2>Seleccionar Integrantes</h2>
 
   <div class="integrantes-grid">
 
-    <!-- Columna izquierda -->
+    <!-- Columna izquierda: búsqueda y lista -->
     <div class="columna-izquierda">
+      <div class="seccion seccion-buscador">
+        <h3>Buscar Integrantes</h3>
+        <form method="get" class="buscador-form">
+          <div class="input-group">
+            <input type="text" name="q" placeholder="Buscar por nombre, puesto o área..." value="{{ request.GET.q }}" class="input-text">
+            <button type="submit" class="btn btn-buscar">🔍 Buscar</button>
+          </div>
+        </form>
+      </div>
+
       <div class="seccion seccion-lista">
         <h3>Lista de Integrantes Disponibles</h3>
         <select id="integrantesSelect" multiple size="8" class="select-multiple">
@@ -29,7 +39,7 @@
       </div>
     </div>
 
-    <!-- Columna derecha -->
+    <!-- Columna derecha: seleccionados y agregar -->
     <div class="columna-derecha">
       <div class="seccion seccion-seleccionados">
         <div class="seleccionados-header">
@@ -40,18 +50,27 @@
           <li id="mensajeVacio" class="mensaje-vacio"><span>No hay integrantes seleccionados</span></li>
         </ul>
       </div>
+
+      <div class="seccion seccion-agregar">
+        <h3>Agregar Nuevo Integrante</h3>
+        <form method="post" class="agregar-form">
+          {% csrf_token %}
+          <div class="form-container">{{ form.as_p }}</div>
+          <button type="submit" name="agregar_integrante" class="btn btn-agregar">👥 Agregar Integrante</button>
+        </form>
+      </div>
     </div>
 
   </div>
 
-  <!-- Formulario descarga PDF -->
-  <form method="post" action="{% url 'directivo_exportar_pdf' %}" id="formDescargarPDF">
+  <!-- Formulario descarga PDF con Notas y Acuerdos -->
+  <form method="post" action="{% url 'descargar_pdf_directiva' %}" id="formDescargarPDF">
     {% csrf_token %}
     <div id="inputsIntegrantes"></div>
 
-    <!-- Notas Directiva -->
+    <!-- Sección Notas -->
     <div class="seccion seccion-notas">
-      <h3>Notas Directiva</h3>
+      <h3>Notas Directivo</h3>
       <div class="contenedor-notas">
         {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
         {% for grupo in notas_por_apartado %}
@@ -82,9 +101,9 @@
       </div>
     </div>
 
-    <!-- Acuerdos Directiva -->
+    <!-- Sección Acuerdos -->
     <div class="seccion seccion-acuerdos">
-      <h3>Acuerdos Directiva</h3>
+      <h3>Acuerdos Directivo</h3>
       <div class="contenedor-acuerdos">
         {% for acuerdo in acuerdos %}
         <div class="acuerdo-item">
@@ -101,10 +120,11 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-descargar">📄 Descargar PDF Directiva</button>
+    <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
   </form>
 
 </div>
-  <script src="{% static 'js/integrantes_directivo.js' %}" defer></script>
+
+<script src="{% static 'js/integrantes.js' %}" defer></script>
 </body>
 </html>

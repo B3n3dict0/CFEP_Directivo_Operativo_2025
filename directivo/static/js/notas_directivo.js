@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Variable para saber si estamos editando
     let editando = { apartado: null, index: null };
 
+    // Inicialmente ocultar el formulario
     formulario.style.display = 'none';
 
     // Mostrar formulario
@@ -50,14 +51,13 @@ document.addEventListener("DOMContentLoaded", function () {
         editando = { apartado: null, index: null };
     }
 
-    // Guardar o modificar nota temporal
+    // Agregar o actualizar nota temporal
     window.directivoAgregarNotaTemporal = function() {
         const apartado = inputApartado.value;
         const texto = textarea.value.trim();
         if(texto === '') return false;
 
         const contenedor = document.getElementById(`notas-temporales-${apartado}`);
-        if(!contenedor) return false;
 
         // Si estamos editando
         if(editando.index !== null) {
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return false;
         }
 
-        // Si es nueva nota
+        // Si es una nueva nota
         const index = notasTemporales[apartado].push(texto) - 1;
 
         const div = document.createElement('div');
@@ -79,11 +79,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const span = document.createElement('span');
         span.textContent = texto + ' (Temporal)';
 
+        // Botón modificar
         const btnModificar = document.createElement('button');
         btnModificar.textContent = 'Modificar';
         btnModificar.classList.add('btn-editar');
         btnModificar.style.marginLeft = '10px';
-
         btnModificar.addEventListener('click', function() {
             directivoMostrarFormulario(apartado, index);
         });
@@ -93,26 +93,27 @@ document.addEventListener("DOMContentLoaded", function () {
         contenedor.appendChild(div);
 
         directivoCerrarFormulario();
-        return false;
+        return false; // Evitar submit real
     }
 
-    // Asociar submit del modal al guardar temporal
-    const formTemporal = document.getElementById('directivo-form-temporal');
-    formTemporal.addEventListener('submit', function(e){
-        e.preventDefault();
-        directivoAgregarNotaTemporal();
-    });
-
-    // Enviar todas las notas al servidor
+    // Enviar todas las notas temporales al servidor
     const formGuardarTodo = document.getElementById('directivo-guardar-todo-form');
-    formGuardarTodo.addEventListener('submit', function(e){
+    formGuardarTodo.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const csrfTokenElem = document.querySelector('#directivo-guardar-todo-form [name=csrfmiddlewaretoken]');
+        const csrfTokenElem = document.querySelector('[name=csrfmiddlewaretoken]');
         const csrfToken = csrfTokenElem ? csrfTokenElem.value : '';
         const url = formGuardarTodo.dataset.url;
 
-        const payload = JSON.stringify(notasTemporales);
+        // Preparar payload
+        const payload = [];
+        for(let key in notasTemporales){
+            notasTemporales[key].forEach(texto => {
+                payload.push({apartado: key, texto: texto});
+            });
+        }
+
+        if(payload.length === 0) return; // nada que guardar
 
         fetch(url, {
             method: 'POST',
@@ -120,13 +121,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken
             },
-            body: payload
+            body: JSON.stringify({notas: payload})
         })
-        .then(response => response.json())
-        .then(data => {
-            alert('Notas guardadas correctamente!');
-            window.location.reload();
+        .then(res => {
+            if(res.ok){
+                location.reload(); // recargar la página con las notas guardadas
+            } else {
+                alert("Error al guardar las notas.");
+            }
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error("Error al enviar notas:", err));
     });
 });
