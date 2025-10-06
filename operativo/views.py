@@ -343,7 +343,6 @@ def descargar_pdf(request):
 
 
 
-
 def descargar_word(request):
     if request.method != "POST":
         return HttpResponse("Método no permitido", status=405)
@@ -372,12 +371,10 @@ def descargar_word(request):
 
         # Función para reemplazar texto simple en todos los runs (para acuerdos y fecha)
         def reemplazar_marcador(doc, marcador, texto):
-            # Párrafos
             for p in doc.paragraphs:
                 for run in p.runs:
                     if marcador in run.text:
                         run.text = run.text.replace(marcador, texto)
-            # Tablas
             for table in doc.tables:
                 for row in table.rows:
                     for cell in row.cells:
@@ -390,10 +387,9 @@ def descargar_word(request):
         def reemplazar_marcador_parrafos(doc, marcador, lista_textos):
             for p in doc.paragraphs:
                 if marcador in p.text:
-                    p.text = ''  # Limpiar el párrafo
+                    p.text = ''
                     for texto in lista_textos:
-                        p.add_run(texto).add_break()  # Salto de línea
-
+                        p.add_run(texto).add_break()
             for table in doc.tables:
                 for row in table.rows:
                     for cell in row.cells:
@@ -405,11 +401,25 @@ def descargar_word(request):
 
         # Preparar listas de texto a insertar
         lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
-        lista_notas = [f"- {n.texto} ({n.fecha_creacion.strftime('%d/%m/%Y')})" for n in notas] or ["Sin notas seleccionadas"]
-        lista_acuerdos = [f"- {a.numerador}. {a.acuerdo} ({a.responsable.nombre_completo})" for a in acuerdos] or ["Sin acuerdos seleccionados"]
+
+        # Notas sin fechas
+        lista_notas = [f"- {n.texto}" for n in notas] or ["Sin notas seleccionadas"]
+
+        # Acuerdos: todos los campos, separados por comas
+        lista_acuerdos = []
+        if acuerdos:
+            for a in acuerdos:
+                fila = f"{a.unidad}, {a.acuerdo}, {a.unidad_parada}, " \
+                       f"{a.fecha_limite.strftime('%d/%m/%Y') if a.fecha_limite else 'N/A'}, " \
+                       f"{a.pendiente}, {a.responsable.nombre_completo}, {a.porcentaje_avance}%"
+                lista_acuerdos.append(f"- {fila}")
+        else:
+            lista_acuerdos = ["Sin acuerdos seleccionados"]
+
+        # Fecha actual
         texto_fecha = timezone.now().strftime("Fecha: %d/%m/%Y")
 
-        # Reemplazar marcadores
+        # Reemplazar marcadores en el documento
         reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
         reemplazar_marcador_parrafos(doc, '{{notas}}', lista_notas)
         reemplazar_marcador(doc, '{{acuerdos}}', "\n".join(lista_acuerdos))
