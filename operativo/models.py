@@ -49,3 +49,17 @@ class AcuerdoOperativo(models.Model):
 
     def __str__(self):
         return f"{self.numerador} - {self.acuerdo[:30]}"
+
+# operativo/models.py
+
+class ComentarioAcuerdo(models.Model):
+    # Relación 1 a 1 con cada AcuerdoOperativo
+    acuerdo = models.OneToOneField(
+        AcuerdoOperativo,
+        on_delete=models.CASCADE,
+        related_name="comentario"
+    )
+    texto = models.TextField(blank=True)  # Puede estar vacío al inicio
+
+    def __str__(self):
+        return f"Comentario Acuerdo {self.acuerdo.numerador}"

@@ -3,54 +3,95 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Acuerdos</title>
-    <link rel="stylesheet" href="{% static 'css/modulo.css' %}">
+    <title>Historial de Acuerdos Directivos</title>
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+    <style>
+        input[type="text"], input[type="number"], textarea { width: 100%; }
+        form { margin: 0; }
+        td { vertical-align: top; }
+        .acciones form { display: inline; }
+        .acciones button { margin-right: 5px; }
+    </style>
 </head>
 <body>
-<h1>Historial de Acuerdos Directivo</h1>
+    <h1>Historial de Acuerdos Directivos</h1>
 
-<!-- Opcional: filtro por pendiente -->
-<form method="get">
-    <label for="pendiente">Mostrar solo pendientes:</label>
-    <input type="checkbox" name="pendiente" id="pendiente" value="1" {% if request.GET.pendiente %}checked{% endif %}>
-    <button type="submit">Filtrar</button>
-</form>
+    <!-- Barra de búsqueda -->
+    <form method="get" action="">
+        <input type="text" name="q" placeholder="Buscar..." value="{{ query|default:'' }}">
+        <button type="submit">Buscar</button>
+        {% if query %}
+            <a href="{% url 'historial_acuerdo_directivo' %}">Limpiar</a>
+        {% endif %}
+    </form>
 
-<table id="tabla-historial">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Unidad</th>
-            <th>Acuerdo</th>
-            <th>Unidad Parada</th>
-            <th>Fecha Límite</th>
-            <th>Pendiente</th>
-            <th>Responsable</th>
-            <th>% Avance</th>
-            <th>Fecha Creación</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for acuerdo in acuerdos %}
-        <tr>
-            <td>{{ acuerdo.numerador }}</td>
-            <td>{{ acuerdo.unidad }}</td>
-            <td>{{ acuerdo.acuerdo }}</td>
-            <td>{% if acuerdo.unidad_parada %}Sí{% else %}No{% endif %}</td>
-            <td>{{ acuerdo.fecha_limite|date:"d/m/Y" }}</td>
-            <td>{% if acuerdo.pendiente %}Sí{% else %}No{% endif %}</td>
-            <td>{{ acuerdo.responsable.nombre_completo }} - {{ acuerdo.responsable.puesto }}</td>
-            <td>{{ acuerdo.porcentaje_avance }}%</td>
-            <td>{{ acuerdo.fecha_creacion|date:"d/m/Y H:i" }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="9">No hay acuerdos registrados.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <!-- Tabla de resultados -->
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Unidad</th>
+                <th>Acuerdo</th>
+                <th>Unidad Parada</th>
+                <th>Fecha Límite</th>
+                <th>Pendiente</th>
+                <th>Responsable</th>
+                <th>Avance (%)</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+                <th>Eliminar</th>
+                <th>Fecha de Creación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acuerdo in acuerdos %}
+            <tr>
+                <!-- Número y Unidad -->
+                <td>{{ acuerdo.numerador }}</td>
+                <td>{{ acuerdo.unidad }}</td>
 
-</body>
+                <!-- Formulario de edición -->
+                <form method="post" action="{% url 'editar_acuerdo_directivo' acuerdo.id %}">
+                    {% csrf_token %}
+                    <td>
+                        <textarea name="acuerdo">{{ acuerdo.acuerdo }}</textarea>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="unidad_parada" {% if acuerdo.unidad_parada %}checked{% endif %}>
+                    </td>
+                    <td>{{ acuerdo.fecha_limite|date:"d/m/Y" }}</td>
+                    <td>{% if acuerdo.pendiente %}Sí{% else %}No{% endif %}</td>
+                    <td>{{ acuerdo.responsable.nombre_completo }} - {{ acuerdo.responsable.puesto }}</td>
+                    <td>
+                        <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100">
+                    </td>
+                    <td>
+                        <textarea name="comentario">{% if acuerdo.comentario %}{{ acuerdo.comentario.texto }}{% endif %}</textarea>
+                    </td>
+                    <td class="acciones">
+                        <button type="submit">Guardar</button>
+                    </td>
+                </form>
+
+                <!-- Botón eliminar -->
+                <td class="acciones">
+                    <form method="post" action="{% url 'eliminar_acuerdo_directivo' acuerdo.id %}" onsubmit="return confirm('¿Deseas eliminar este acuerdo?')">
+                        {% csrf_token %}
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+
+                <!-- Fecha de creación -->
+                <td>{{ acuerdo.fecha_creacion|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="12">No hay acuerdos registrados.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{% url 'directivo_crear_acuerdo' %}">Crear acuerdo</a>
 </html>

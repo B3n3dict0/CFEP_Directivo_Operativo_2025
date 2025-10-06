@@ -37,3 +37,11 @@ class AcuerdoDirectivo(models.Model):
 
     def __str__(self):
         return f"{self.numerador} - {self.acuerdo[:30]}"
+
+
+class ComentarioDirectivo(models.Model):
+    acuerdo = models.OneToOneField(AcuerdoDirectivo, on_delete=models.CASCADE, related_name="comentario")
+    texto = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Comentario de {self.acuerdo.numerador}"

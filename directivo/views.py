@@ -18,9 +18,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 # Modelos
-from .models import NotaDirectivo, AcuerdoDirectivo, Integrante
+from .models import ComentarioDirectivo, NotaDirectivo, AcuerdoDirectivo, Integrante
 
 # Formularios
 from .forms import NotaDirectivoForm, IntegranteForm
@@ -138,6 +139,32 @@ def historial_acuerdos(request):
         'acuerdos': acuerdos,
         'query': query,
     })
+
+@require_POST
+def editar_acuerdo_directivo(request, id):
+    acuerdo = get_object_or_404(AcuerdoDirectivo, id=id)
+    
+    acuerdo.unidad_parada = request.POST.get("unidad_parada") == "on"
+    acuerdo.acuerdo = request.POST.get("acuerdo")
+    acuerdo.porcentaje_avance = int(request.POST.get("porcentaje_avance", acuerdo.porcentaje_avance))
+    acuerdo.save()
+
+    # Guardar o crear comentario
+    comentario_texto = request.POST.get("comentario", "")
+    comentario_obj, created = ComentarioDirectivo.objects.get_or_create(acuerdo=acuerdo)
+    comentario_obj.texto = comentario_texto
+    comentario_obj.save()
+
+    return redirect("directivo_historial_acuerdos")
+
+# ----------------------------
+# ELIMINAR ACUERDO
+# ----------------------------
+@require_POST
+def eliminar_acuerdo_directivo(request, id):
+    acuerdo = get_object_or_404(AcuerdoDirectivo, id=id)
+    acuerdo.delete()
+    return redirect("directivo_historial_acuerdos")
 
 
 # ---------------- Selección y Descarga ----------------

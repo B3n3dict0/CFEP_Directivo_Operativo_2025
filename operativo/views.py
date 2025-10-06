@@ -4,6 +4,7 @@ import io
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
 from django.utils import timezone
 from reportlab.lib.pagesizes import letter
 from operativo import models
@@ -22,10 +23,11 @@ from .models import Integrante, Nota, AcuerdoOperativo
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from reportlab.platypus import Paragraph
-
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+from .models import AcuerdoOperativo, ComentarioAcuerdo
 
 def operativo_view(request):
-    # Formulario para agregar integrantes
     if request.method == "POST" and 'agregar_integrante' in request.POST:
         form = IntegranteForm(request.POST)
         if form.is_valid():
@@ -34,14 +36,11 @@ def operativo_view(request):
     else:
         form = IntegranteForm()
 
-    # Traer todos los integrantes existentes
     integrantes = Integrante.objects.all().order_by('area__nombre', 'nombre_completo')
 
-    # Para la búsqueda
     query = request.GET.get('q')
     if query:
         integrantes = integrantes.filter(nombre_completo__icontains=query)
-
     seleccionados = []
 
     return render(request, "operativo/base.html", {
@@ -51,7 +50,7 @@ def operativo_view(request):
         'fecha_actual': timezone.now(),
     })
 
-
+# --- Logica para crear e insertar Notas  -------------------------------------------------------
 def editar_nota(request, nota_id):
     nota = get_object_or_404(Nota, id=nota_id)
     if request.method == "POST":
@@ -79,11 +78,7 @@ def guardar_todo(request):
     return JsonResponse({'status': 'error'}, status=400)
 
 
-def historial_notas(request):
-    notas = Nota.objects.all().order_by('-fecha_creacion')
-    return render(request, 'modulo/historial_notas.html', {'notas': notas})
-
-
+# ---Apartado para toda la logica de reglas -------------------------------------------------------------
 def crear_acuerdo_operativo(request):
     integrantes = Integrante.objects.all().order_by('area__nombre', 'nombre_completo')
     unidades = list(range(1, 10))
@@ -132,23 +127,32 @@ def historial_acuerdo_operativo(request):
         'query': query,
     })
 
+@require_POST
+def editar_acuerdo_operativo(request, acuerdo_id):
+    acuerdo = get_object_or_404(AcuerdoOperativo, id=acuerdo_id)
+    
+    acuerdo.unidad_parada = request.POST.get('unidad_parada') == 'on'
+    acuerdo.acuerdo = request.POST.get('acuerdo')
+    acuerdo.porcentaje_avance = int(request.POST.get('porcentaje_avance', acuerdo.porcentaje_avance))
+    acuerdo.save()
 
-def seleccionar_integrantes(request):
-    integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
+    comentario_texto = request.POST.get('comentario', '')
+    comentario_obj, created = ComentarioAcuerdo.objects.get_or_create(acuerdo=acuerdo)
+    comentario_obj.texto = comentario_texto
+    comentario_obj.save()
 
-    if request.method == "POST":
-        seleccionados_ids = request.POST.getlist("integrantes")
-        request.session["integrantes_seleccionados"] = [str(i) for i in seleccionados_ids]
-        return redirect("descarga")
+    return redirect('historial_acuerdo_operativo')  # ✅ usar el name de la URL
 
-    seleccionados_ids = request.session.get("integrantes_seleccionados", [])
-    seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
 
-    return render(request, "modulo/integrantes.html", {
-        "integrantes": integrantes,
-        "seleccionados": seleccionados,
-    })
+@require_POST
+def eliminar_acuerdo_operativo(request, acuerdo_id):
+    acuerdo = get_object_or_404(AcuerdoOperativo, id=acuerdo_id)
+    acuerdo.delete()
+    return redirect('historial_acuerdo_operativo')  # ✅ usar el name de la URL
 
+
+
+# --- Descarga.html toda la logica para descargar pdf con formato -------------------------------------------------------
 
 def descarga(request):
     integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
@@ -165,45 +169,33 @@ def descarga(request):
     })
 
 
-
-
-
-
-
-
-
-
-# --- Función para buscar imágenes en STATICFILES_DIRS ---
 def buscar_imagen(nombre_archivo):
     for carpeta in settings.STATICFILES_DIRS:
         ruta = os.path.join(carpeta, "img", nombre_archivo)
         if os.path.exists(ruta):
             return ruta
-    return None  # Devuelve None si no se encuentra
+    return None  
 
 def encabezado_y_pie(canvas, doc):
-    # Ruta de tu imagen de encabezado
-    encabezado = buscar_imagen("encabezado.jpg")  # tu imagen combinada
+    encabezado = buscar_imagen("encabezado.jpg")  
 
     if encabezado:
         img = ImageReader(encabezado)
         ancho_original, alto_original = img.getSize()
-        ancho_pdf = A4[0] - 2*cm  # ancho total menos márgenes
+        ancho_pdf = A4[0] - 2*cm  
         escala = ancho_pdf / ancho_original
         alto_final = alto_original * escala
 
-        # Dibujar la imagen en la parte superior
         canvas.drawImage(
             encabezado,
-            1*cm,            # margen izquierdo
-            A4[1] - alto_final - 1*cm,  # altura desde el borde superior
+            1*cm,        
+            A4[1] - alto_final - 1*cm, 
             width=ancho_pdf,
             height=alto_final,
             preserveAspectRatio=True,
             mask='auto'
         )
 
-    # --- Pie de página ---
     canvas.setStrokeColor(colors.grey)
     canvas.line(1*cm, 2*cm, 20*cm, 2*cm)
 
@@ -214,19 +206,16 @@ def encabezado_y_pie(canvas, doc):
 # --- Vista para generar PDF ---
 def descargar_pdf(request):
     if request.method == "POST":
-        # Obtener datos seleccionados
         notas_ids = request.POST.getlist("notas_seleccionadas")
         acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
         integrantes_ids = request.POST.getlist("integrantes")
 
-        # Consultar BD
         integrantes = Integrante.objects.filter(id__in=integrantes_ids)
         notas = Nota.objects.filter(id__in=notas_ids)
         acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
 
         fecha = date.today().strftime("%d/%m/%Y")
 
-        # --- Preparar contenido PDF ---
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=A4,
                                 leftMargin=2*cm, rightMargin=2*cm,

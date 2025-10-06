@@ -8,6 +8,8 @@ urlpatterns = [
     # Acuerdos Directiva
     path('crear-acuerdo/', views.crear_acuerdo_directivo, name='directivo_crear_acuerdo'),
     path('historial-acuerdos/', views.historial_acuerdos, name='directivo_historial_acuerdos'),
+    path("editar/<int:id>/", views.editar_acuerdo_directivo, name="editar_acuerdo_directivo"),
+    path("eliminar/<int:id>/", views.eliminar_acuerdo_directivo, name="eliminar_acuerdo_directivo"),
 
     # Notas Directiva
     path('descarga/', views.descarga_directiva, name='descarga_directiva'),
