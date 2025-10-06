@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Proyecto</title>
+    <title>Minuta Directiva y Operativa</title>
     <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 </head>
 <body>
 
     <!-- Logout -->
     <div class="logout-container">
-        <a href="{% url 'logout' %}" class="logout-link">Cerrar sesión</a>
+        <a href="{% url 'logout' %}" class="logout-link" target="_blank">Cerrar sesión</a>
     </div>
 
     <!-- Menú lateral -->
@@ -23,10 +23,10 @@
 
         <ul class="menu-list">
             <li class="menu-item {% if request.path == '/directivo/' %}active{% endif %}">
-                <a href="{% url 'directivo_index' %}" class="menu-link">Directivo</a>
+                <a href="{% url 'directivo_index' %}" class="menu-link" target="_blank">Directivo</a>
             </li>
             <li class="menu-item {% if request.path == '/operativo/' %}active{% endif %}">
-                <a href="{% url 'operativo_index' %}" class="menu-link">Operativo</a>
+                <a href="{% url 'operativo_index' %}" class="menu-link" target="_blank">Operativo</a>
             </li>
         </ul>
     </div>

@@ -9,21 +9,29 @@
       <h3>1. PRODUCCIÓN <span class="tiempo">6 MIN</span></h3>
       <button onclick="mostrarFormulario('produccion')">Agregar Nota</button>
       <div id="notas-produccion">
-        {% for nota in notas %}
-          {% if nota.apartado == 'produccion' %}
-            <div class="nota-item">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'produccion' %}
+        <div class="nota-item">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-produccion"></div>
       </div>
       <ul>
         <li>ESTADO DE LAS UNIDADES</li>
-        <li>SEGUIMIENTO A REGIMEN TÉRMICO DE LAS UNIDADES (solo para centrales termoelectricas)</li>
+        <li>
+          SEGUIMIENTO A REGIMEN TÉRMICO DE LAS UNIDADES (solo para centrales
+          termoelectricas)
+        </li>
         <li>Avisos de atención inmediata del área de operación</li>
-        <li>Avisos de atención inmediata del área química (solo para centrales que cuentan con esta área)</li>
+        <li>
+          Avisos de atención inmediata del área química (solo para centrales que
+          cuentan con esta área)
+        </li>
         <li>Maniobras con riesgo para la operación de las unidades</li>
       </ul>
     </div>
@@ -33,19 +41,26 @@
       <h3>2. MANTENIMIENTO <span class="tiempo">2 MIN</span></h3>
       <button onclick="mostrarFormulario('mantenimiento')">Agregar Nota</button>
       <div id="notas-mantenimiento">
-        {% for nota in notas %}
-          {% if nota.apartado == 'mantenimiento' %}
-            <div class="nota-item">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'mantenimiento' %}
+        <div class="nota-item">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-mantenimiento"></div>
       </div>
       <ul>
-        <li>Seguimiento de actividades que originaron salida o decremento de la unidad</li>
-        <li>Avance del proyecto de mantenimiento en proceso y su problemática</li>
+        <li>
+          Seguimiento de actividades que originaron salida o decremento de la
+          unidad
+        </li>
+        <li>
+          Avance del proyecto de mantenimiento en proceso y su problemática
+        </li>
         <li>Avisos de atención inmediata de mantenimiento predictivo</li>
         <li>Actividades de mantenimiento con riesgo</li>
       </ul>
@@ -56,48 +71,68 @@
       <h3>3. SEGURIDAD Y AMBIENTAL <span class="tiempo">3 MIN</span></h3>
       <button onclick="mostrarFormulario('seguridad')">Agregar Nota</button>
       <div id="notas-seguridad">
-        {% for nota in notas %}
-          {% if nota.apartado == 'seguridad' %}
-            <div class="nota-item">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'seguridad' %}
+        <div class="nota-item">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-seguridad"></div>
       </div>
       <ul>
-        <li>Avisos de atención inmediata relacionados con aspectos de seguridad</li>
-        <li>EVENTOS QUE AFECTEN O PUEDAN AFECTAR LAS CONDICIONES DE SEGURIDAD DE LA CENTRAL</li>
-        <li>EVENTOS QUE AFECTEN O PUEDAN AFECTAR LAS CONDICIONES AMBIENTALES DE LA CENTRAL</li>
+        <li>
+          Avisos de atención inmediata relacionados con aspectos de seguridad
+        </li>
+        <li>
+          EVENTOS QUE AFECTEN O PUEDAN AFECTAR LAS CONDICIONES DE SEGURIDAD DE
+          LA CENTRAL
+        </li>
+        <li>
+          EVENTOS QUE AFECTEN O PUEDAN AFECTAR LAS CONDICIONES AMBIENTALES DE LA
+          CENTRAL
+        </li>
       </ul>
     </div>
 
     <!-- 4. REVISIÓN DE ACUERDOS ANTERIORES -->
     <div class="seccion-item">
-      <h3>4. REVISIÓN DE ACUERDOS ANTERIORES <span class="tiempo">2 MIN</span></h3>
-      <a href="{% url 'historial_acuerdo_operativo' %}">Ir a página</a>
+      <h3>
+        4. REVISIÓN DE ACUERDOS ANTERIORES <span class="tiempo">2 MIN</span>
+      </h3>
+      <a href="{% url 'historial_acuerdo_operativo' %}" target="_blank"
+        >Ir a página</a
+      >
     </div>
 
     <!-- 5. CREACIÓN DE ACUERDOS NUEVOS -->
     <div class="seccion-item">
       <h3>5. CREACIÓN DE ACUERDOS NUEVOS <span class="tiempo">1 MIN</span></h3>
-      <a href="{% url 'crear_acuerdo_operativo' %}" target="_blank">Ir a página</a>
+      <a href="{% url 'crear_acuerdo_operativo' %}" target="_blank"
+        >Ir a página</a
+      >
     </div>
 
     <!-- 6. SUPERINTENDENCIA GENERAL -->
     <div class="seccion-item">
       <h3>6. SUPERINTENDENCIA GENERAL <span class="tiempo">1 MIN</span></h3>
-      <button onclick="mostrarFormulario('superintendencia')">Agregar Nota</button>
+      <button onclick="mostrarFormulario('superintendencia')">
+        Agregar Nota
+      </button>
       <div id="notas-superintendencia">
-        {% for nota in notas %}
-          {% if nota.apartado == 'superintendencia' %}
-            <div class="nota-item">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'superintendencia' %}
+        <div class="nota-item">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-superintendencia"></div>
       </div>
       <p>RATIFICACIÓN DE LAS ACTIVIDADES PRIORITARIAS DEL DÍA</p>
@@ -112,11 +147,17 @@
 <div id="formulario-nota">
   <h4>Agregar Nota</h4>
   <form id="form-temporal" onsubmit="return agregarNotaTemporal();">
-    <input type="hidden" id="id_apartado" name="apartado">
-    <textarea id="texto_nota" rows="3" placeholder="Escribe tu nota aquí..."></textarea>
-    <div style="text-align: right; margin-top: 8px;">
+    <input type="hidden" id="id_apartado" name="apartado" />
+    <textarea
+      id="texto_nota"
+      rows="3"
+      placeholder="Escribe tu nota aquí..."
+    ></textarea>
+    <div style="text-align: right; margin-top: 8px">
       <button type="submit" class="btn btn-guardar">Guardar</button>
-      <button type="button" class="btn btn-cerrar" onclick="cerrarFormulario()">Cerrar</button>
+      <button type="button" class="btn btn-cerrar" onclick="cerrarFormulario()">
+        Cerrar
+      </button>
     </div>
   </form>
 </div>
@@ -132,8 +173,6 @@
     <div class="icono-descarga">📥</div>
     <h3>Descargar Formato</h3>
     <p>Accede al historial completo de notas</p>
-    <a href="{% url 'descarga' %}" class="btn-descarga">
-      Ver Historial
-    </a>
+    <a href="{% url 'descarga' %}" class="btn-descarga" target="_blank">Ver Historial</a>
   </div>
 </section>

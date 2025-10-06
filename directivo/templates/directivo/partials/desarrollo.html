@@ -4,20 +4,23 @@
   <h2>INFORMACIÓN</h2>
 
   <div class="secciones-grid">
-
     <!-- 1. PRODUCCIÓN -->
     <div class="seccion-item">
       <h3>1. PRODUCCIÓN <span class="tiempo">5 MIN</span></h3>
-      <button onclick="directivoMostrarFormulario('produccion')">Agregar Nota</button>
+      <button onclick="directivoMostrarFormulario('produccion')">
+        Agregar Nota
+      </button>
       <div id="notas-produccion">
-        {% for nota in notas %}
-          {% if nota.apartado == 'produccion' %}
-            <div class="nota-item" data-id="{{ nota.id }}">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'produccion' %}
+        <div class="nota-item" data-id="{{ nota.id }}">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-produccion"></div>
       </div>
     </div>
@@ -25,16 +28,20 @@
     <!-- 2. MANTENIMIENTO -->
     <div class="seccion-item">
       <h3>2. MANTENIMIENTO <span class="tiempo">5 MIN</span></h3>
-      <button onclick="directivoMostrarFormulario('mantenimiento')">Agregar Nota</button>
+      <button onclick="directivoMostrarFormulario('mantenimiento')">
+        Agregar Nota
+      </button>
       <div id="notas-mantenimiento">
-        {% for nota in notas %}
-          {% if nota.apartado == 'mantenimiento' %}
-            <div class="nota-item" data-id="{{ nota.id }}">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'mantenimiento' %}
+        <div class="nota-item" data-id="{{ nota.id }}">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-mantenimiento"></div>
       </div>
     </div>
@@ -42,67 +49,86 @@
     <!-- 3. GESTIÓN DE RECURSOS -->
     <div class="seccion-item">
       <h3>3. GESTIÓN DE RECURSOS <span class="tiempo">4 MIN</span></h3>
-      <button onclick="directivoMostrarFormulario('gestion')">Agregar Nota</button>
+      <button onclick="directivoMostrarFormulario('gestion')">
+        Agregar Nota
+      </button>
       <div id="notas-gestion">
-        {% for nota in notas %}
-          {% if nota.apartado == 'gestion' %}
-            <div class="nota-item" data-id="{{ nota.id }}">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'gestion' %}
+        <div class="nota-item" data-id="{{ nota.id }}">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-gestion"></div>
       </div>
     </div>
 
     <!-- 4. SEGURIDAD, AMBIENTAL Y CALIDAD -->
     <div class="seccion-item">
-      <h3>4. SEGURIDAD, AMBIENTAL Y CALIDAD <span class="tiempo">3 MIN</span></h3>
-      <button onclick="directivoMostrarFormulario('seguridad')">Agregar Nota</button>
+      <h3>
+        4. SEGURIDAD, AMBIENTAL Y CALIDAD <span class="tiempo">3 MIN</span>
+      </h3>
+      <button onclick="directivoMostrarFormulario('seguridad')">
+        Agregar Nota
+      </button>
       <div id="notas-seguridad">
-        {% for nota in notas %}
-          {% if nota.apartado == 'seguridad' %}
-            <div class="nota-item" data-id="{{ nota.id }}">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'seguridad' %}
+        <div class="nota-item" data-id="{{ nota.id }}">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-seguridad"></div>
       </div>
     </div>
 
     <!-- 5. REVISIÓN DE ACUERDOS ANTERIORES -->
     <div class="seccion-item">
-      <h3>5. REVISIÓN DE ACUERDOS ANTERIORES <span class="tiempo">5 MIN</span></h3>
-      <a href="{% url 'directivo_historial_acuerdos' %}">Ir a página</a>
+      <h3>
+        5. REVISIÓN DE ACUERDOS ANTERIORES <span class="tiempo">5 MIN</span>
+      </h3>
+      <a href="{% url 'directivo_historial_acuerdos' %}" target="_blank"
+        >Ir a página</a
+      >
     </div>
 
     <!-- 6. CREACIÓN DE ACUERDOS NUEVOS -->
     <div class="seccion-item">
       <h3>6. CREACIÓN DE ACUERDOS NUEVOS <span class="tiempo">8 MIN</span></h3>
-      <a href="{% url 'directivo_crear_acuerdo' %}" target="_blank">Ir a página</a>
+      <a href="{% url 'directivo_crear_acuerdo' %}" target="_blank"
+        >Ir a página</a
+      >
     </div>
 
     <!-- 7. SUPERINTENDENTE GENERAL -->
     <div class="seccion-item">
       <h3>7. SUPERINTENDENTE GENERAL <span class="tiempo">2 MIN</span></h3>
-      <button onclick="directivoMostrarFormulario('superintendencia')">Agregar Nota</button>
+      <button onclick="directivoMostrarFormulario('superintendencia')">
+        Agregar Nota
+      </button>
       <div id="notas-superintendencia">
-        {% for nota in notas %}
-          {% if nota.apartado == 'superintendencia' %}
-            <div class="nota-item" data-id="{{ nota.id }}">
-              <span>{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span>
-              <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar">Editar</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+        {% for nota in notas %} {% if nota.apartado == 'superintendencia' %}
+        <div class="nota-item" data-id="{{ nota.id }}">
+          <span
+            >{{ nota.texto }} ({{ nota.fecha_creacion|date:"d/m/Y H:i" }})</span
+          >
+          <a href="{% url 'directivo_editar_nota' nota.id %}" class="btn-editar"
+            >Editar</a
+          >
+        </div>
+        {% endif %} {% endfor %}
         <div id="notas-temporales-superintendencia"></div>
       </div>
       <p>Ratificación de las actividades relevantes</p>
     </div>
-
   </div>
 </section>
 
@@ -110,29 +136,46 @@
 <div id="directivo-overlay-nota"></div>
 <div id="directivo-formulario-nota">
   <h4>Agregar Nota</h4>
-  <form id="directivo-form-temporal" onsubmit="return directivoAgregarNotaTemporal();">
+  <form
+    id="directivo-form-temporal"
+    onsubmit="return directivoAgregarNotaTemporal();"
+  >
     {% csrf_token %}
-    <input type="hidden" id="directivo-id-apartado" name="apartado">
-    <textarea id="directivo-texto-nota" rows="4" placeholder="Escribe tu nota aquí..."></textarea>
-    <div style="text-align: right; margin-top: 10px;">
+    <input type="hidden" id="directivo-id-apartado" name="apartado" />
+    <textarea
+      id="directivo-texto-nota"
+      rows="4"
+      placeholder="Escribe tu nota aquí..."
+    ></textarea>
+    <div style="text-align: right; margin-top: 10px">
       <button type="submit" class="btn btn-guardar">Guardar</button>
-      <button type="button" class="btn btn-cerrar" onclick="directivoCerrarFormulario()">Cerrar</button>
+      <button
+        type="button"
+        class="btn btn-cerrar"
+        onclick="directivoCerrarFormulario()"
+      >
+        Cerrar
+      </button>
     </div>
   </form>
 </div>
 
-<hr>
+<hr />
 
-<form id="directivo-guardar-todo-form" data-url="{% url 'directivo_guardar_todo' %}">
+<form
+  id="directivo-guardar-todo-form"
+  data-url="{% url 'directivo_guardar_todo' %}"
+>
   {% csrf_token %}
   <button type="submit">Guardar Todo</button>
 </form>
 
+<!-- Sección de descarga -->
 <section class="seccion-descarga">
   <div class="tarjeta-descarga">
     <div class="icono-descarga">📥</div>
     <h3>Descargar Formato</h3>
     <p>Accede al historial completo de notas</p>
-    <a href="{% url 'descarga_directiva' %}" class="btn-descarga">Ver Historial</a>
+    <a href="{% url 'descarga_directiva' %}" class="btn-descarga" target="_blank">Ver Historial</a>
   </div>
 </section>

@@ -1,5 +1,5 @@
 /* ============================ */
-/* Estilos para Directivo */
+/* Estilos optimizados para directivo.html */
 /* ============================ */
 
 /* Reset mínimo */
@@ -26,7 +26,7 @@
     --sombra: rgba(0,0,0,0.08);
 }
 
-/* Contenedor principal */
+/* Contenedor desarrollo */
 .desarrollo {
     background-color: var(--blanco);
     border-left: 5px solid var(--rojo-marron);
@@ -45,7 +45,7 @@
     padding-bottom: 8px;
 }
 
-/* Secciones en grid */
+/* Grid layout para secciones */
 .secciones-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -125,10 +125,10 @@
 }
 
 /* ============================ */
-/* Estilos para formulario modal Directivo */
+/* Estilos para formulario de notas - directivo */
 /* ============================ */
 
-/* Overlay */
+/* Fondo de overlay */
 #directivo-overlay-nota {
     display: none;
     position: fixed;
@@ -165,7 +165,7 @@
     text-align: center;
 }
 
-/* Textarea del modal */
+/* Textarea */
 #directivo-formulario-nota textarea {
     width: 100%;
     font-size: 0.9rem;
@@ -225,7 +225,7 @@
     color: var(--gris-medio);
 }
 
-/* Botón editar dentro de nota */
+/* Botón de editar */
 .nota-item .btn-editar {
     background-color: var(--azul);
     color: white;
@@ -242,7 +242,7 @@
     background-color: var(--azul-hover);
 }
 
-/* Botón Guardar Todo */
+/* Botón guardar todo */
 #directivo-guardar-todo-form {
     margin-top: 15px;
     text-align: center;
