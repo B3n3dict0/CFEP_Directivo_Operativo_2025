@@ -171,41 +171,6 @@ def descarga(request):
     })
 
 
-def buscar_imagen(nombre_archivo):
-    for carpeta in settings.STATICFILES_DIRS:
-        ruta = os.path.join(carpeta, "img", nombre_archivo)
-        if os.path.exists(ruta):
-            return ruta
-    return None  
-
-def encabezado_y_pie(canvas, doc):
-    encabezado = buscar_imagen("encabezado.jpg")  
-
-    if encabezado:
-        img = ImageReader(encabezado)
-        ancho_original, alto_original = img.getSize()
-        ancho_pdf = A4[0] - 2*cm  
-        escala = ancho_pdf / ancho_original
-        alto_final = alto_original * escala
-
-        canvas.drawImage(
-            encabezado,
-            1*cm,        
-            A4[1] - alto_final - 1*cm, 
-            width=ancho_pdf,
-            height=alto_final,
-            preserveAspectRatio=True,
-            mask='auto'
-        )
-
-    canvas.setStrokeColor(colors.grey)
-    canvas.line(1*cm, 2*cm, 20*cm, 2*cm)
-
-    page_num = canvas.getPageNumber()
-    canvas.setFont("Helvetica", 9)
-    canvas.drawRightString(20*cm, 1.2*cm, f"Página {page_num}")
-
-
 def descargar_word(request):
     if request.method != "POST":
         return HttpResponse("Método no permitido", status=405)
@@ -301,33 +266,3 @@ def descargar_word(request):
 
 
 
-
-def descargar_pdf_desde_word(request):
-    if request.method != "POST":
-        return HttpResponse("Método no permitido", status=405)
-
-    # --- Generar Word como en tu función descargar_word ---
-    plantilla_path = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'Operativa.docx')
-    doc = Document(plantilla_path)
-
-    # Aquí reemplazas tus marcadores como ya haces en descargar_word
-    # ejemplo:
-    # reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
-    # ...
-
-    # Guardar Word temporal
-    temp_word = tempfile.NamedTemporaryFile(delete=False, suffix=".docx")
-    doc.save(temp_word.name)
-
-    # Convertir Word a PDF usando docx2pdf
-    temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    convert(temp_word.name, temp_pdf.name)
-
-    # Enviar PDF como respuesta
-    with open(temp_pdf.name, "rb") as f:
-        pdf_bytes = f.read()
-
-    response = HttpResponse(pdf_bytes, content_type="application/pdf")
-    response['Content-Disposition'] = 'attachment; filename="Minuta_Reunion.pdf"'
-
-    return response

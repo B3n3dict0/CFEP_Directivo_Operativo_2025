@@ -1,9 +1,10 @@
 # Python estándar
+import datetime
 import io
 from datetime import date
 import os
 import json
-
+from docx import Document
 # Django
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -203,170 +204,141 @@ def descarga_directiva(request):
     })
 
 
-# ---------------- Funciones PDF ----------------
+# ---------------- Funciones WORD ----------------
 
-def buscar_imagen(nombre_archivo):
-    for carpeta in settings.STATICFILES_DIRS:
-        ruta = os.path.join(carpeta, "img", nombre_archivo)
-        if os.path.exists(ruta):
-            return ruta
-    return None
+def descargar_word_directiva(request):
+    if request.method != "POST":
+        return HttpResponse("Método no permitido", status=405)
 
+    # Obtener IDs seleccionados desde el form
+    integrantes_ids = request.POST.getlist("integrantes")
+    notas_ids = request.POST.getlist("notas_seleccionadas")
+    acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
 
-def encabezado_y_pie(canvas, doc):
-    encabezado = buscar_imagen("encabezado.jpg")
-    if encabezado:
-        img = ImageReader(encabezado)
-        ancho_original, alto_original = img.getSize()
-        ancho_pdf = A4[0] - 2*cm
-        escala = ancho_pdf / ancho_original
-        alto_final = alto_original * escala
+    # Traer objetos de la DB de manera segura
+    try:
+        integrantes = Integrante.objects.filter(id__in=integrantes_ids) if integrantes_ids else []
+        notas = NotaDirectivo.objects.filter(id__in=notas_ids) if notas_ids else []
+        acuerdos = AcuerdoDirectivo.objects.filter(id__in=acuerdos_ids).order_by("numerador") if acuerdos_ids else []
+    except Exception as e:
+        return HttpResponse(f"Error al obtener datos: {str(e)}", status=500)
 
-        canvas.drawImage(
-            encabezado,
-            1*cm,
-            A4[1] - alto_final - 1*cm,
-            width=ancho_pdf,
-            height=alto_final,
-            preserveAspectRatio=True,
-            mask='auto'
+    # Ruta segura de la plantilla (igual que operativa, pero Directiva.docx)
+    plantilla_path = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'Directiva.docx')
+    if not os.path.exists(plantilla_path):
+        return HttpResponse("Plantilla no encontrada.", status=404)
+
+    try:
+        # Cargar plantilla
+        doc = Document(plantilla_path)
+
+        # Función para reemplazar texto simple en todos los runs (para marcadores sueltos)
+        def reemplazar_marcador(doc, marcador, texto):
+            for p in doc.paragraphs:
+                for run in p.runs:
+                    if marcador in run.text:
+                        run.text = run.text.replace(marcador, texto)
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for p in cell.paragraphs:
+                            for run in p.runs:
+                                if marcador in run.text:
+                                    run.text = run.text.replace(marcador, texto)
+
+        # Función para reemplazar marcador con múltiples líneas (para integrantes y notas)
+        def reemplazar_marcador_parrafos(doc, marcador, lista_textos):
+            for p in doc.paragraphs:
+                if marcador in p.text:
+                    p.text = ''
+                    for texto in lista_textos:
+                        p.add_run(texto).add_break()
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for p in cell.paragraphs:
+                            if marcador in p.text:
+                                p.text = ''
+                                for texto in lista_textos:
+                                    p.add_run(texto).add_break()
+
+        # Preparar listas de texto a insertar
+        lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
+        lista_notas = [f"- {n.texto}" for n in notas] or ["Sin notas seleccionadas"]
+
+        # Reemplazar integrantes y notas (uso de párrafos)
+        reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
+        reemplazar_marcador_parrafos(doc, '{{notas}}', lista_notas)
+
+        # Fecha actual (misma forma que en operativa)
+        texto_fecha = timezone.now().strftime("Fecha: %d/%m/%Y")
+        reemplazar_marcador(doc, '{{fecha}}', texto_fecha)
+
+        # ---- Rellenar la tabla de acuerdos usando las filas existentes con el marcador {{acuerdos}} ----
+        # Buscamos la tabla y la primera fila donde aparezca '{{acuerdos}}'
+        tabla_obj = None
+        fila_inicio = None
+        for t in doc.tables:
+            for idx, row in enumerate(t.rows):
+                if any('{{acuerdos}}' in cell.text for cell in row.cells):
+                    tabla_obj = t
+                    fila_inicio = idx
+                    break
+            if tabla_obj:
+                break
+
+        if tabla_obj is not None and fila_inicio is not None:
+            # llenamos desde fila_inicio hacia abajo con los acuerdos seleccionados
+            max_rows = len(tabla_obj.rows)
+            # número de filas disponibles para datos (incluye la fila que contiene marcador)
+            filas_disponibles = max_rows - fila_inicio
+
+            # Rellenar hasta lo disponible
+            for i, a in enumerate(acuerdos):
+                if i >= filas_disponibles:
+                    # Si hay más acuerdos que filas, ignoramos los extras (o podrías agregar filas con table.add_row())
+                    break
+                target_row_index = fila_inicio + i
+                cells = tabla_obj.rows[target_row_index].cells
+                # columnas esperadas: [No., Compromiso, Responsable(s), Fecha límite]
+                # Aseguramos no acceder fuera de rango de celdas
+                if len(cells) >= 4:
+                    # dejar o actualizar la numeración (mejor usar el numerador del acuerdo)
+                    cells[0].text = str(a.numerador) if a.numerador is not None else str(i + 1)
+                    cells[1].text = a.acuerdo or ""
+                    cells[2].text = (a.responsable.nombre_completo if a.responsable else "-")
+                    cells[3].text = a.fecha_limite.strftime('%d/%m/%Y') if a.fecha_limite else "-"
+                else:
+                    # si la tabla tiene menos columnas, intentamos rellenar las que existan
+                    if len(cells) > 0:
+                        cells[0].text = a.acuerdo[:0]  # no hacer nada importante aquí
+            # Limpiar filas sobrantes (si se seleccionaron menos acuerdos que filas disponibles)
+            llenadas = min(len(acuerdos), filas_disponibles)
+            for j in range(fila_inicio + llenadas, fila_inicio + filas_disponibles):
+                if j >= max_rows:
+                    break
+                cells = tabla_obj.rows[j].cells
+                # limpiar solo las columnas 1..3 (compromiso, responsable, fecha)
+                if len(cells) >= 4:
+                    cells[1].text = ""
+                    cells[2].text = ""
+                    cells[3].text = ""
+                else:
+                    # si menos columnas, limpiar todas las celdas
+                    for c in cells:
+                        c.text = ""
+
+        else:
+            # No se encontró la tabla con el marcador {{acuerdos}} — no es crítico, solo continuar
+            pass
+
+        # Preparar respuesta para descarga (guardar directamente en la respuesta)
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-
-    canvas.setStrokeColor(colors.grey)
-    canvas.line(1*cm, 2*cm, 20*cm, 2*cm)
-    page_num = canvas.getPageNumber()
-    canvas.setFont("Helvetica", 9)
-    canvas.drawRightString(20*cm, 1.2*cm, f"Página {page_num}")
-
-def descargar_pdf_directiva(request):
-    if request.method == "POST":
-        # --- Obtener datos del POST ---
-        notas_ids = request.POST.getlist("notas_seleccionadas")
-        acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
-        integrantes_ids = request.POST.getlist("integrantes")
-
-        # --- Consultar base de datos ---
-        integrantes = Integrante.objects.filter(id__in=integrantes_ids)
-        notas = NotaDirectivo.objects.filter(id__in=notas_ids)
-        acuerdos = AcuerdoDirectivo.objects.filter(id__in=acuerdos_ids)
-
-        fecha = date.today().strftime("%d/%m/%Y")
-
-        # --- Preparar PDF ---
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4,
-                                leftMargin=2*cm, rightMargin=2*cm,
-                                topMargin=5*cm, bottomMargin=3*cm)
-
-        elementos = []
-        styles = getSampleStyleSheet()
-        normal = styles["Normal"]
-        normal.fontSize = 10
-        heading = styles["Heading3"]
-        heading.fontSize = 12
-
-        # --- Título principal ---
-        titulo = [[Paragraph('<font color="white"><b>MINUTA DE REUNIÓN DIRECTIVA</b></font>', normal)]]
-        tabla_titulo = Table(titulo, colWidths=[doc.width])
-        tabla_titulo.setStyle(TableStyle([
-            ("BACKGROUND", (0,0), (-1,-1), colors.black),
-            ("ALIGN", (0,0), (-1,-1), "CENTER"),
-            ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-            ("FONTSIZE", (0,0), (-1,-1), 14),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_titulo)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 1: Datos Generales ---
-        datos_generales = [
-            [Paragraph("MINUTA DE REUNIÓN", normal), Paragraph("Reunión Directiva Central FCP", normal)],
-            [Paragraph("Lugar:", normal), Paragraph("Sala de Juntas de la Central FCP", normal),
-             Paragraph("Fecha y Horario:", normal), Paragraph(fecha, normal)],
-        ]
-        tabla_datos = Table(datos_generales, colWidths=[doc.width*0.25, doc.width*0.35, doc.width*0.2, doc.width*0.2])
-        tabla_datos.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 4),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-        ]))
-        elementos.append(tabla_datos)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 2: Objetivo, Importancia y Participantes ---
-        tabla_objetivo_importancia = [
-            [Paragraph("<b>Objetivo(s)</b>", normal)],
-            [Paragraph("PROPÓSITO: Informar el estado general de las áreas directivas y decisiones estratégicas prioritarias.", normal)],
-            [Paragraph("IMPORTANCIA: Que el personal oriente sus actividades a la solución de necesidades estratégicas para la organización.", normal)],
-            [Paragraph("<b>Participantes</b>", normal)],
-            [Paragraph(", ".join([f"{i}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes, start=1)]), normal)],
-        ]
-        tabla_obj_imp = Table(tabla_objetivo_importancia, colWidths=[doc.width])
-        tabla_obj_imp.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 4),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-        ]))
-        elementos.append(tabla_obj_imp)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 3: Orden del Día (adaptado para Directiva) ---
-        orden_dia = [
-            ["1. Revisión de metas estratégicas y resultados trimestrales", "Dirección"],
-            ["2. Seguimiento de proyectos clave", "Proyectos"],
-            ["3. Discusión de presupuestos y asignaciones", "Finanzas"],
-            ["4. Presentación de decisiones anteriores y acuerdos", "Todos"],
-        ]
-        tabla_orden = Table(orden_dia, colWidths=[doc.width*0.7, doc.width*0.3])
-        tabla_orden.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_orden)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 4: Desarrollo ---
-        desarrollo_list = [[Paragraph(f"{i}. {x.get_apartado_display()} - {x.texto}", normal)] for i, x in enumerate(notas, start=1)]
-        tabla_desarrollo = Table([[Paragraph("<b>Desarrollo</b>", normal)]] + desarrollo_list, colWidths=[doc.width])
-        tabla_desarrollo.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_desarrollo)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 5: Compromisos y Acuerdos ---
-        acuerdos_list = [[Paragraph(f"{i}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})", normal)] for i, x in enumerate(acuerdos, start=1)]
-        tabla_acuerdos = Table([[Paragraph("<b>Compromisos y Acuerdos</b>", normal)]] + acuerdos_list, colWidths=[doc.width])
-        tabla_acuerdos.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_acuerdos)
-        elementos.append(Spacer(1, 12))
-
-        # --- Generar PDF ---
-        doc.build(elementos, onFirstPage=encabezado_y_pie, onLaterPages=encabezado_y_pie)
-
-        pdf = buffer.getvalue()
-        buffer.close()
-
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = 'attachment; filename="Minuta_Reunion_Directiva.pdf"'
-        response.write(pdf)
+        response['Content-Disposition'] = 'attachment; filename=Minuta_Directiva.docx'
+        doc.save(response)
         return response
 
-    return HttpResponse("Método no permitido", status=405)
+    except Exception as e:
+        return HttpResponse(f"Error al generar Word: {str(e)}", status=500)

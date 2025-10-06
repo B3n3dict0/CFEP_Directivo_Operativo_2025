@@ -42,17 +42,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Preparar inputs hidden al enviar el formulario de PDF
-    formDescargar.addEventListener("submit", function () {
+    // Función para crear inputs hidden
+    function agregarHiddenInputs(nombre, valores) {
         // Eliminar inputs previos
-        formDescargar.querySelectorAll('input[name="integrantes"]').forEach(i => i.remove());
-        // Crear un input hidden por cada seleccionado
-        Array.from(lista.querySelectorAll("li[data-id]")).forEach(li => {
+        formDescargar.querySelectorAll(`input[name="${nombre}"]`).forEach(i => i.remove());
+        // Crear un input hidden por cada valor
+        valores.forEach(valor => {
             const input = document.createElement("input");
             input.type = "hidden";
-            input.name = "integrantes";
-            input.value = li.dataset.id;
+            input.name = nombre;
+            input.value = valor;
             formDescargar.appendChild(input);
         });
+    }
+
+    // Preparar inputs hidden al enviar el formulario
+    formDescargar.addEventListener("submit", function () {
+        // Integrantes
+        const idsIntegrantes = Array.from(lista.querySelectorAll("li[data-id]"))
+                                     .map(li => li.dataset.id);
+        agregarHiddenInputs("integrantes", idsIntegrantes);
+
+        // Notas seleccionadas
+        const idsNotas = Array.from(document.querySelectorAll('input[name="notas_seleccionadas"]:checked'))
+                              .map(n => n.value);
+        agregarHiddenInputs("notas_seleccionadas", idsNotas);
+
+        // Acuerdos seleccionados
+        const idsAcuerdos = Array.from(document.querySelectorAll('input[name="acuerdos_seleccionados"]:checked'))
+                                 .map(a => a.value);
+        agregarHiddenInputs("acuerdos_seleccionados", idsAcuerdos);
     });
 });

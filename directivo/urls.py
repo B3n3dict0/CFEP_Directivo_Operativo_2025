@@ -15,7 +15,6 @@ urlpatterns = [
     path('descarga/', views.descarga_directiva, name='descarga_directiva'),
     path('editar-nota/<int:nota_id>/', views.editar_nota_directivo, name='directivo_editar_nota'),
     path('guardar-todo/', views.guardar_todo_directivo, name='directivo_guardar_todo'),
-
-    # Descarga / Exportar PDF
-    path('descargar-pdf/', views.descargar_pdf_directiva, name='descargar_pdf_directiva'),
+    path('descargar_word_directiva/', views.descargar_word_directiva, name='descargar_word_directiva'),
+    
 ]

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descargar PDF - Directivo</title>
+    <title>Descargar Word - Directivo</title>
     <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
@@ -63,10 +63,12 @@
 
   </div>
 
-  <!-- Formulario descarga PDF con Notas y Acuerdos -->
-  <form method="post" action="{% url 'descargar_pdf_directiva' %}" id="formDescargarPDF">
+  <!-- Formulario descarga Word -->
+  <form method="post" action="{% url 'descargar_word_directiva' %}" id="formDescargarWord">
     {% csrf_token %}
-    <div id="inputsIntegrantes"></div>
+    <div id="inputsIntegrantesWord"></div>
+    <div id="inputsNotasWord"></div>
+    <div id="inputsAcuerdosWord"></div>
 
     <!-- Sección Notas -->
     <div class="seccion seccion-notas">
@@ -120,7 +122,7 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
+    <button type="submit" class="btn btn-descargar-word">📄 Descargar Word</button>
   </form>
 
 </div>
