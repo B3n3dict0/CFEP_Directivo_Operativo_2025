@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descargar PDF</title>
+    <title>Descargar PDF y Word</title>
     <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
@@ -63,7 +63,7 @@
 
   </div>
 
-  <!-- Formulario descarga PDF con Notas y Acuerdos -->
+  <!-- Formulario descarga PDF -->
   <form method="post" action="{% url 'descargar_pdf' %}" id="formDescargarPDF">
     {% csrf_token %}
     <div id="inputsIntegrantes"></div>
@@ -75,7 +75,7 @@
         {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
         {% for grupo in notas_por_apartado %}
           <div class="nota-grupo">
-            <h4>{{ grupo.grouper|title }}</h4> <!-- Apartado solo una vez -->
+            <h4>{{ grupo.grouper|title }}</h4>
             <table class="tabla-notas" border="1" cellspacing="0" cellpadding="5" width="100%">
               <thead>
                 <tr>
@@ -121,6 +121,15 @@
     </div>
 
     <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
+  </form>
+
+  <!-- Formulario descarga Word -->
+  <form method="post" action="{% url 'descargar_word' %}" id="formDescargarWord">
+    {% csrf_token %}
+    <div id="inputsIntegrantesWord"></div>
+    <div id="inputsNotasWord"></div>
+    <div id="inputsAcuerdosWord"></div>
+    <button type="submit" class="btn btn-descargar-word">📄 Descargar Word</button>
   </form>
 
 </div>

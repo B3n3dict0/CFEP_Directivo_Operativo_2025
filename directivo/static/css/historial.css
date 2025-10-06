@@ -8,7 +8,7 @@ body {
 /* Título */
 h1 {
     text-align: center;
-    color: #4b5320; /* rojo/marrón oscuro */
+    color: #4b5320;
     margin-bottom: 20px;
 }
 
@@ -28,7 +28,7 @@ form input[type="text"] {
 
 form button {
     padding: 8px 15px;
-    background-color: #4CAF50; /* verde */
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -54,7 +54,7 @@ table {
 
 /* Encabezado de tabla */
 table thead {
-    background-color: #4CAF50; /* verde */
+    background-color: #4CAF50;
     color: white;
 }
 
@@ -66,12 +66,12 @@ table th, table td {
 
 /* Filas alternadas */
 table tbody tr:nth-child(even) {
-    background-color: #f2f2f2; /* gris claro */
+    background-color: #f2f2f2;
 }
 
 /* Hover sobre filas */
 table tbody tr:hover {
-    background-color: #e0f7e0; /* verde muy suave */
+    background-color: #e0f7e0;
 }
 
 /* Celdas especiales */
@@ -80,24 +80,33 @@ table td {
 }
 
 /* No hay datos */
-table tbody tr td[colspan="9"] {
+table tbody tr td[colspan="12"] {
     text-align: center;
     font-style: italic;
-    color: #8B0000; /* rojo/marrón */
+    color: #8B0000;
 }
 
 /* Semaforización de % de avance */
 .avance-rojo {
-    color: #ff0000; /* rojo */
+    background-color: #ff4d4d; /* rojo */
+    color: white;
     font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .avance-amarillo {
-    color: #ffcc00; /* amarillo */
+    background-color: #ffcc33; /* amarillo */
+    color: black;
     font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
 }
 
 .avance-verde {
-    color: #28a745; /* verde */
+    background-color: #28a745; /* verde */
+    color: white;
     font-weight: bold;
+    border-radius: 5px;
+    padding: 5px;
 }

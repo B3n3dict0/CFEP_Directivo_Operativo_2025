@@ -63,7 +63,16 @@
                     <td>{% if acuerdo.pendiente %} Sí {% else %} No {% endif %}</td>
                     <td>{{ acuerdo.responsable.nombre_completo }}</td>
                     <td>
-                        <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100">
+                        <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100"
+                            class="
+                            {% if acuerdo.porcentaje_avance < 90 %}
+                                avance-rojo
+                            {% elif acuerdo.porcentaje_avance < 100 %}
+                                avance-amarillo
+                            {% else %}
+                                avance-verde
+                            {% endif %}
+                            ">
                     </td>
                     <td>
                         <textarea name="comentario">{% if acuerdo.comentario %}{{ acuerdo.comentario.texto }}{% endif %}</textarea>
@@ -86,7 +95,7 @@
             </tr>
             {% empty %}
                 <tr>
-                    <td colspan="11">No hay acuerdos registrados.</td>
+                    <td colspan="12">No hay acuerdos registrados.</td>
                 </tr>
             {% endfor %}
         </tbody>

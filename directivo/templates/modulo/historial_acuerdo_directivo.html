@@ -6,11 +6,21 @@
     <title>Historial de Acuerdos Directivos</title>
     <link rel="stylesheet" href="{% static 'css/historial.css' %}">
     <style>
-        input[type="text"], input[type="number"], textarea { width: 100%; }
-        form { margin: 0; }
-        td { vertical-align: top; }
-        .acciones form { display: inline; }
-        .acciones button { margin-right: 5px; }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+        }
+        form {
+            margin: 0;
+        }
+        td {
+            vertical-align: top;
+        }
+        .acciones form {
+            display: inline;
+        }
+        .acciones button {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -63,7 +73,16 @@
                     <td>{% if acuerdo.pendiente %}Sí{% else %}No{% endif %}</td>
                     <td>{{ acuerdo.responsable.nombre_completo }} - {{ acuerdo.responsable.puesto }}</td>
                     <td>
-                        <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100">
+                        <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100"
+                            class="
+                            {% if acuerdo.porcentaje_avance < 90 %}
+                                avance-rojo
+                            {% elif acuerdo.porcentaje_avance < 100 %}
+                                avance-amarillo
+                            {% else %}
+                                avance-verde
+                            {% endif %}
+                            ">
                     </td>
                     <td>
                         <textarea name="comentario">{% if acuerdo.comentario %}{{ acuerdo.comentario.texto }}{% endif %}</textarea>
@@ -94,4 +113,5 @@
 
     <br>
     <a href="{% url 'directivo_crear_acuerdo' %}">Crear acuerdo</a>
+</body>
 </html>

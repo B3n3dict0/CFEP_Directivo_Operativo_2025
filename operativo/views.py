@@ -26,6 +26,8 @@ from reportlab.platypus import Paragraph
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from .models import AcuerdoOperativo, ComentarioAcuerdo
+from docx import Document
+
 
 def operativo_view(request):
     if request.method == "POST" and 'agregar_integrante' in request.POST:
@@ -339,3 +341,87 @@ def descargar_pdf(request):
 
     return HttpResponse("Método no permitido", status=405)
 
+
+
+
+def descargar_word(request):
+    if request.method != "POST":
+        return HttpResponse("Método no permitido", status=405)
+
+    # Obtener IDs seleccionados desde el form
+    integrantes_ids = request.POST.getlist("integrantes")
+    notas_ids = request.POST.getlist("notas_seleccionadas")
+    acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
+
+    # Traer objetos de la DB de manera segura
+    try:
+        integrantes = Integrante.objects.filter(id__in=integrantes_ids) if integrantes_ids else []
+        notas = Nota.objects.filter(id__in=notas_ids) if notas_ids else []
+        acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids) if acuerdos_ids else []
+    except Exception as e:
+        return HttpResponse(f"Error al obtener datos: {str(e)}", status=500)
+
+    # Ruta segura de la plantilla
+    plantilla_path = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'Operativa.docx')
+    if not os.path.exists(plantilla_path):
+        return HttpResponse("Plantilla no encontrada.", status=404)
+
+    try:
+        # Cargar plantilla
+        doc = Document(plantilla_path)
+
+        # Función para reemplazar texto simple en todos los runs (para acuerdos y fecha)
+        def reemplazar_marcador(doc, marcador, texto):
+            # Párrafos
+            for p in doc.paragraphs:
+                for run in p.runs:
+                    if marcador in run.text:
+                        run.text = run.text.replace(marcador, texto)
+            # Tablas
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for p in cell.paragraphs:
+                            for run in p.runs:
+                                if marcador in run.text:
+                                    run.text = run.text.replace(marcador, texto)
+
+        # Función para reemplazar marcador con múltiples líneas (para integrantes y notas)
+        def reemplazar_marcador_parrafos(doc, marcador, lista_textos):
+            for p in doc.paragraphs:
+                if marcador in p.text:
+                    p.text = ''  # Limpiar el párrafo
+                    for texto in lista_textos:
+                        p.add_run(texto).add_break()  # Salto de línea
+
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for p in cell.paragraphs:
+                            if marcador in p.text:
+                                p.text = ''
+                                for texto in lista_textos:
+                                    p.add_run(texto).add_break()
+
+        # Preparar listas de texto a insertar
+        lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
+        lista_notas = [f"- {n.texto} ({n.fecha_creacion.strftime('%d/%m/%Y')})" for n in notas] or ["Sin notas seleccionadas"]
+        lista_acuerdos = [f"- {a.numerador}. {a.acuerdo} ({a.responsable.nombre_completo})" for a in acuerdos] or ["Sin acuerdos seleccionados"]
+        texto_fecha = timezone.now().strftime("Fecha: %d/%m/%Y")
+
+        # Reemplazar marcadores
+        reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
+        reemplazar_marcador_parrafos(doc, '{{notas}}', lista_notas)
+        reemplazar_marcador(doc, '{{acuerdos}}', "\n".join(lista_acuerdos))
+        reemplazar_marcador(doc, '{{fecha}}', texto_fecha)
+
+        # Preparar respuesta para descarga
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        )
+        response['Content-Disposition'] = 'attachment; filename=Minuta_Operativa.docx'
+        doc.save(response)
+        return response
+
+    except Exception as e:
+        return HttpResponse(f"Error al generar Word: {str(e)}", status=500)

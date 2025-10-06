@@ -13,4 +13,6 @@ urlpatterns = [
     path('guardar-todo/', views.guardar_todo, name='guardar_todo'),
     path('descarga/', views.descarga, name='descarga'),
     path('descargar-pdf/', views.descargar_pdf, name='descargar_pdf'),
+    path('descargar-word/', views.descargar_word, name='descargar_word'),
+
 ]

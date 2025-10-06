@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const botonAgregar = document.getElementById("agregarSeleccionados");
     const mensajeVacio = document.getElementById("mensajeVacio");
     const formDescargar = document.getElementById("formDescargarPDF");
+    const formWord = document.getElementById("formDescargarWord");
 
-    // Almacena los seleccionados para evitar duplicados
     const seleccionadosSet = new Set();
 
     function actualizarMensaje() {
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     actualizarMensaje();
 
-    // Agregar seleccionados
+    // --- Agregar integrantes seleccionados ---
     botonAgregar.addEventListener("click", function () {
         Array.from(select.selectedOptions).forEach(option => {
             const id = option.value;
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         actualizarMensaje();
     });
 
-    // Delegación de eventos para eliminar
+    // --- Eliminar integrantes seleccionados ---
     lista.addEventListener("click", function (e) {
         if (e.target.classList.contains("eliminarBtn")) {
             const li = e.target.parentElement;
@@ -42,17 +42,51 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Preparar inputs hidden al enviar el formulario de PDF
-    formDescargar.addEventListener("submit", function () {
-        // Eliminar inputs previos
-        formDescargar.querySelectorAll('input[name="integrantes"]').forEach(i => i.remove());
-        // Crear un input hidden por cada seleccionado
-        Array.from(lista.querySelectorAll("li[data-id]")).forEach(li => {
+    // --- Función para agregar hidden inputs ---
+    function agregarHiddenInputs(form, nombre, valores) {
+        // Limpiar solo inputs generados con el mismo name
+        form.querySelectorAll(`input.generated[name="${nombre}"]`).forEach(i => i.remove());
+
+        valores.forEach(valor => {
             const input = document.createElement("input");
             input.type = "hidden";
-            input.name = "integrantes";
-            input.value = li.dataset.id;
-            formDescargar.appendChild(input);
+            input.name = nombre;
+            input.value = valor;
+            input.classList.add("generated"); // marca como generado por JS
+            form.appendChild(input);
         });
+    }
+
+    // --- PDF: agregar hidden inputs al enviar ---
+    formDescargar.addEventListener("submit", function () {
+        const idsIntegrantes = Array.from(lista.querySelectorAll("li[data-id]"))
+                                     .map(li => li.dataset.id);
+        agregarHiddenInputs(formDescargar, "integrantes", idsIntegrantes);
+
+        // Notas seleccionadas para PDF
+        const idsNotas = Array.from(document.querySelectorAll('input[name="notas_seleccionadas"]:checked'))
+                              .map(n => n.value);
+        agregarHiddenInputs(formDescargar, "notas_seleccionadas", idsNotas);
+
+        // Acuerdos seleccionados para PDF
+        const idsAcuerdos = Array.from(document.querySelectorAll('input[name="acuerdos_seleccionados"]:checked'))
+                                 .map(a => a.value);
+        agregarHiddenInputs(formDescargar, "acuerdos_seleccionados", idsAcuerdos);
+    });
+
+    // --- Word: agregar hidden inputs al enviar ---
+    formWord.addEventListener("submit", function () {
+        const idsIntegrantes = Array.from(lista.querySelectorAll("li[data-id]"))
+                                     .map(li => li.dataset.id);
+        const idsNotas = Array.from(document.querySelectorAll('input[name="notas_seleccionadas"]:checked'))
+                              .map(n => n.value);
+        const idsAcuerdos = Array.from(document.querySelectorAll('input[name="acuerdos_seleccionados"]:checked'))
+                                 .map(a => a.value);
+
+        agregarHiddenInputs(formWord, "integrantes", idsIntegrantes);
+        agregarHiddenInputs(formWord, "notas_seleccionadas", idsNotas);
+        agregarHiddenInputs(formWord, "acuerdos_seleccionados", idsAcuerdos);
     });
 });
+
+
