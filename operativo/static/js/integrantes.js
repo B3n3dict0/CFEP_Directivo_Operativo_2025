@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const lista = document.getElementById("listaSeleccionados");
     const botonAgregar = document.getElementById("agregarSeleccionados");
     const mensajeVacio = document.getElementById("mensajeVacio");
-    const formDescargar = document.getElementById("formDescargarPDF");
     const formWord = document.getElementById("formDescargarWord");
 
     const seleccionadosSet = new Set();
@@ -57,23 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- PDF: agregar hidden inputs al enviar ---
-    formDescargar.addEventListener("submit", function () {
-        const idsIntegrantes = Array.from(lista.querySelectorAll("li[data-id]"))
-                                     .map(li => li.dataset.id);
-        agregarHiddenInputs(formDescargar, "integrantes", idsIntegrantes);
-
-        // Notas seleccionadas para PDF
-        const idsNotas = Array.from(document.querySelectorAll('input[name="notas_seleccionadas"]:checked'))
-                              .map(n => n.value);
-        agregarHiddenInputs(formDescargar, "notas_seleccionadas", idsNotas);
-
-        // Acuerdos seleccionados para PDF
-        const idsAcuerdos = Array.from(document.querySelectorAll('input[name="acuerdos_seleccionados"]:checked'))
-                                 .map(a => a.value);
-        agregarHiddenInputs(formDescargar, "acuerdos_seleccionados", idsAcuerdos);
-    });
-
     // --- Word: agregar hidden inputs al enviar ---
     formWord.addEventListener("submit", function () {
         const idsIntegrantes = Array.from(lista.querySelectorAll("li[data-id]"))
@@ -88,5 +70,3 @@ document.addEventListener("DOMContentLoaded", function () {
         agregarHiddenInputs(formWord, "acuerdos_seleccionados", idsAcuerdos);
     });
 });
-
-

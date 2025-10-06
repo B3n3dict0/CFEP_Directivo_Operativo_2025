@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descargar PDF y Word</title>
+    <title>Descargar Word</title>
     <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
 </head>
 <body>
@@ -63,65 +63,57 @@
 
   </div>
 
-  <!-- Formulario descarga PDF -->
-  <form method="post" action="{% url 'descargar_pdf' %}" id="formDescargarPDF">
-    {% csrf_token %}
-    <div id="inputsIntegrantes"></div>
-
-    <!-- Sección Notas -->
-    <div class="seccion seccion-notas">
-      <h3>Notas</h3>
-      <div class="contenedor-notas">
-        {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
-        {% for grupo in notas_por_apartado %}
-          <div class="nota-grupo">
-            <h4>{{ grupo.grouper|title }}</h4>
-            <table class="tabla-notas" border="1" cellspacing="0" cellpadding="5" width="100%">
-              <thead>
-                <tr>
-                  <th>Seleccionar</th>
-                  <th>Nota</th>
-                  <th>Fecha Creación</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for nota in grupo.list %}
-                <tr>
-                  <td><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"></td>
-                  <td>{{ nota.texto }}</td>
-                  <td>{{ nota.fecha_creacion|date:"d/m/Y" }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% empty %}
-          <p>No hay notas disponibles</p>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Sección Acuerdos -->
-    <div class="seccion seccion-acuerdos">
-      <h3>Acuerdos</h3>
-      <div class="contenedor-acuerdos">
-        {% for acuerdo in acuerdos %}
-        <div class="acuerdo-item">
-          <label>
-            <input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}">
-            <span class="acuerdo-numero">{{ acuerdo.numerador }}</span>. 
-            <span class="acuerdo-texto">{{ acuerdo.acuerdo }}</span> 
-            (<span class="acuerdo-responsable">{{ acuerdo.responsable.nombre_completo }}</span>)
-          </label>
+  <!-- Sección Notas -->
+  <div class="seccion seccion-notas">
+    <h3>Notas</h3>
+    <div class="contenedor-notas">
+      {% regroup notas|dictsort:"apartado" by apartado as notas_por_apartado %}
+      {% for grupo in notas_por_apartado %}
+        <div class="nota-grupo">
+          <h4>{{ grupo.grouper|title }}</h4>
+          <table class="tabla-notas" border="1" cellspacing="0" cellpadding="5" width="100%">
+            <thead>
+              <tr>
+                <th>Seleccionar</th>
+                <th>Nota</th>
+                <th>Fecha Creación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for nota in grupo.list %}
+              <tr>
+                <td><input type="checkbox" name="notas_seleccionadas" value="{{ nota.id }}"></td>
+                <td>{{ nota.texto }}</td>
+                <td>{{ nota.fecha_creacion|date:"d/m/Y" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        {% empty %}
-        <p>No hay acuerdos disponibles</p>
-        {% endfor %}
-      </div>
+      {% empty %}
+        <p>No hay notas disponibles</p>
+      {% endfor %}
     </div>
+  </div>
 
-    <button type="submit" class="btn btn-descargar">📄 Descargar PDF</button>
-  </form>
+  <!-- Sección Acuerdos -->
+  <div class="seccion seccion-acuerdos">
+    <h3>Acuerdos</h3>
+    <div class="contenedor-acuerdos">
+      {% for acuerdo in acuerdos %}
+      <div class="acuerdo-item">
+        <label>
+          <input type="checkbox" name="acuerdos_seleccionados" value="{{ acuerdo.id }}">
+          <span class="acuerdo-numero">{{ acuerdo.numerador }}</span>. 
+          <span class="acuerdo-texto">{{ acuerdo.acuerdo }}</span> 
+          (<span class="acuerdo-responsable">{{ acuerdo.responsable.nombre_completo }}</span>)
+        </label>
+      </div>
+      {% empty %}
+      <p>No hay acuerdos disponibles</p>
+      {% endfor %}
+    </div>
+  </div>
 
   <!-- Formulario descarga Word -->
   <form method="post" action="{% url 'descargar_word' %}" id="formDescargarWord">

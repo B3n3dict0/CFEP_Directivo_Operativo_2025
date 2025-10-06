@@ -12,7 +12,6 @@ urlpatterns = [
     path('editar/<int:nota_id>/', views.editar_nota, name='editar_nota'),
     path('guardar-todo/', views.guardar_todo, name='guardar_todo'),
     path('descarga/', views.descarga, name='descarga'),
-    path('descargar-pdf/', views.descargar_pdf, name='descargar_pdf'),
     path('descargar-word/', views.descargar_word, name='descargar_word'),
 
 ]

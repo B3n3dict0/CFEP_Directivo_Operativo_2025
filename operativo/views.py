@@ -205,143 +205,6 @@ def encabezado_y_pie(canvas, doc):
     canvas.setFont("Helvetica", 9)
     canvas.drawRightString(20*cm, 1.2*cm, f"Página {page_num}")
 
-# --- Vista para generar PDF ---
-def descargar_pdf(request):
-    if request.method == "POST":
-        notas_ids = request.POST.getlist("notas_seleccionadas")
-        acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
-        integrantes_ids = request.POST.getlist("integrantes")
-
-        integrantes = Integrante.objects.filter(id__in=integrantes_ids)
-        notas = Nota.objects.filter(id__in=notas_ids)
-        acuerdos = AcuerdoOperativo.objects.filter(id__in=acuerdos_ids)
-
-        fecha = date.today().strftime("%d/%m/%Y")
-
-        buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4,
-                                leftMargin=2*cm, rightMargin=2*cm,
-                                topMargin=5*cm, bottomMargin=3*cm)
-
-        elementos = []
-        styles = getSampleStyleSheet()
-        normal = styles["Normal"]
-        normal.fontSize = 10
-        heading = styles["Heading3"]
-        heading.fontSize = 12
-
-        # --- Título principal ---
-        titulo = [[Paragraph('<font color="white"><b>MINUTA DE REUNIÓN</b></font>', normal)]]
-        tabla_titulo = Table(titulo, colWidths=[doc.width])
-        tabla_titulo.setStyle(TableStyle([
-            ("BACKGROUND", (0,0), (-1,-1), colors.black),
-            ("ALIGN", (0,0), (-1,-1), "CENTER"),
-            ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-            ("FONTSIZE", (0,0), (-1,-1), 14),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_titulo)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 1: Datos Generales ---
-        datos_generales = [
-            [Paragraph("MINUTA DE REUNIÓN", normal), Paragraph("Reunión Operativa Central Felipe Carrillo Puerto", normal)],
-            [Paragraph("Lugar:", normal), Paragraph("Sala de Juntas de la Central FCP", normal), Paragraph("Fecha y Horario:", normal), Paragraph(fecha, normal)],
-        ]
-        tabla_datos = Table(datos_generales, colWidths=[doc.width*0.25, doc.width*0.35, doc.width*0.2, doc.width*0.2])
-        tabla_datos.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 4),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-        ]))
-        elementos.append(tabla_datos)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 2: Objetivo, Importancia y Participantes ---
-        tabla_objetivo_importancia = [
-            [Paragraph("<b>Objetivo(s)</b>", normal)],
-            [Paragraph("PROPÓSITO: Informar el estado de las unidades, proporcionar la problemática prioritaria de las áreas operativas e informar el avance de los programas de mantenimiento.", normal)],
-            [Paragraph("IMPORTANCIA: Que el personal oriente sus actividades a la solución de las necesidades prioritarias para mantener las unidades operando en forma confiable y segura, además de informar el avance de los proyectos de mantenimiento.", normal)],
-            [Paragraph("<b>Participantes</b>", normal)],
-            [Paragraph(", ".join([f"{i}. {x.nombre_completo} - {x.puesto}" for i, x in enumerate(integrantes, start=1)]), normal)],
-        ]
-        tabla_obj_imp = Table(tabla_objetivo_importancia, colWidths=[doc.width])
-        tabla_obj_imp.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-            ("TOPPADDING", (0,0), (-1,-1), 4),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 4),
-        ]))
-        elementos.append(tabla_obj_imp)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 3: Orden del Día ---
-        orden_dia = [
-            ["1. ESTADO DE LAS UNIDADES …\nSEGUIMIENTO A REGIMEN TERMICO …\nSeguimiento Operativo Anomalías FCP\nAvisos de operación y química\nManiobras de riesgo", "Producción"],
-            ["2. Seguimiento de actividades que originaron salida …\nAvance del proyecto de mantenimiento\nAvisos de mantenimiento predictivo\nActividades de riesgo", "Mantenimiento"],
-            ["3. Avisos de atención inmediata relacionados con aspectos de seguridad", "Seguridad"],
-            ["4. Eventos que afecten condiciones de seguridad", "Seguridad"],
-            ["5. Eventos que afecten condiciones ambientales", "Ambiental"],
-            ["6. Presentación de problemática y solución en materia de seguridad", "Seguridad"],
-            ["7. Presentación de problemática y solución en materia ambiental", "Ambiental"],
-            ["8. Revisión de Acuerdos Anteriores\nSeguimiento Operativo Anomalías FCP", "Calidad"],
-            ["9. Creación de Acuerdos Nuevos\nSeguimiento Operativo Anomalías Central FCP", "Todos"],
-            ["10. Ratificación de Actividades Prioritarias del Día", "Superintendencia General"],
-        ]
-        tabla_orden = Table(orden_dia, colWidths=[doc.width*0.7, doc.width*0.3])
-        tabla_orden.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_orden)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 4: Desarrollo ---
-        desarrollo_list = [[Paragraph(f"{i}. {x.get_apartado_display()} - {x.texto}", normal)] for i, x in enumerate(notas, start=1)]
-        tabla_desarrollo = Table([[Paragraph("<b>Desarrollo</b>", normal)]] + desarrollo_list, colWidths=[doc.width])
-        tabla_desarrollo.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_desarrollo)
-        elementos.append(Spacer(1, 12))
-
-        # --- Tabla 5: Compromisos y Acuerdos ---
-        acuerdos_list = [[Paragraph(f"{i}. {x.numerador}. {x.acuerdo} ({x.responsable.nombre_completo})", normal)] for i, x in enumerate(acuerdos, start=1)]
-        tabla_acuerdos = Table([[Paragraph("<b>Compromisos y Acuerdos</b>", normal)]] + acuerdos_list, colWidths=[doc.width])
-        tabla_acuerdos.setStyle(TableStyle([
-            ("GRID", (0,0), (-1,-1), 1, colors.black),
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 6),
-            ("RIGHTPADDING", (0,0), (-1,-1), 6),
-        ]))
-        elementos.append(tabla_acuerdos)
-        elementos.append(Spacer(1, 12))
-
-        # --- Generar PDF ---
-        doc.build(elementos, onFirstPage=encabezado_y_pie, onLaterPages=encabezado_y_pie)
-
-        pdf = buffer.getvalue()
-        buffer.close()
-
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = 'attachment; filename="Minuta_Reunion.pdf"'
-        response.write(pdf)
-        return response
-
-    return HttpResponse("Método no permitido", status=405)
-
-
 
 def descargar_word(request):
     if request.method != "POST":
@@ -435,3 +298,36 @@ def descargar_word(request):
 
     except Exception as e:
         return HttpResponse(f"Error al generar Word: {str(e)}", status=500)
+
+
+
+
+def descargar_pdf_desde_word(request):
+    if request.method != "POST":
+        return HttpResponse("Método no permitido", status=405)
+
+    # --- Generar Word como en tu función descargar_word ---
+    plantilla_path = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'Operativa.docx')
+    doc = Document(plantilla_path)
+
+    # Aquí reemplazas tus marcadores como ya haces en descargar_word
+    # ejemplo:
+    # reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
+    # ...
+
+    # Guardar Word temporal
+    temp_word = tempfile.NamedTemporaryFile(delete=False, suffix=".docx")
+    doc.save(temp_word.name)
+
+    # Convertir Word a PDF usando docx2pdf
+    temp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    convert(temp_word.name, temp_pdf.name)
+
+    # Enviar PDF como respuesta
+    with open(temp_pdf.name, "rb") as f:
+        pdf_bytes = f.read()
+
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response['Content-Disposition'] = 'attachment; filename="Minuta_Reunion.pdf"'
+
+    return response
