@@ -245,7 +245,7 @@ def descargar_word(request):
             lista_acuerdos = ["Sin acuerdos seleccionados"]
 
         # Fecha actual
-        texto_fecha = timezone.now().strftime("Fecha: %d/%m/%Y")
+        texto_fecha = timezone.now().strftime("%d/%m/%Y")
 
         # Reemplazar marcadores en el documento
         reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)

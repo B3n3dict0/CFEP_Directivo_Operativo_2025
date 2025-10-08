@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Descargar Word - Directivo</title>
-    <link rel="stylesheet" href="{% static 'css/descarga.css' %}">
+    <link rel="stylesheet" href="{% static 'css/descarga_directivo.css' %}">
 </head>
 <body>
 <div class="integrantes">
@@ -63,7 +63,21 @@
 
   </div>
 
-  <!-- Formulario descarga Word -->
+  <!-- Formulario de filtros (GET) -->
+  <div class="filtros-seccion">
+    <form method="get">
+      <label for="fecha_filtro">Filtrar Notas y Acuerdos por fecha:</label>
+      <select name="fecha_filtro" id="fecha_filtro" onchange="this.form.submit()">
+        <option value="ultimos" {% if fecha_filtro == 'ultimos' %}selected{% endif %}>Últimos agregados</option>
+        <option value="hoy" {% if fecha_filtro == 'hoy' %}selected{% endif %}>Hoy</option>
+        <option value="7dias" {% if fecha_filtro == '7dias' %}selected{% endif %}>Últimos 7 días</option>
+        <option value="30dias" {% if fecha_filtro == '30dias' %}selected{% endif %}>Últimos 30 días</option>
+        <option value="todos" {% if fecha_filtro == 'todos' %}selected{% endif %}>Todos</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- Formulario descarga Word (POST) -->
   <form method="post" action="{% url 'descargar_word_directiva' %}" id="formDescargarWord">
     {% csrf_token %}
     <div id="inputsIntegrantesWord"></div>

@@ -1,7 +1,6 @@
 # Python estándar
-import datetime
 import io
-from datetime import date
+from datetime import datetime, timedelta
 import os
 import json
 from docx import Document
@@ -27,6 +26,7 @@ from .models import ComentarioDirectivo, NotaDirectivo, AcuerdoDirectivo, Integr
 # Formularios
 from .forms import NotaDirectivoForm, IntegranteForm
 from directivo import models
+
 
 
 # ---------------- VIEWS ----------------
@@ -187,10 +187,51 @@ def seleccionar_integrantes_directivo(request):
     })
 
 
+
 def descarga_directiva(request):
-    integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
-    notas = NotaDirectivo.objects.all().order_by('-fecha_creacion')
-    acuerdos = AcuerdoDirectivo.objects.all().order_by('-fecha_creacion')
+    from datetime import datetime, timedelta
+
+    # Filtrado de búsqueda para integrantes
+    query = request.GET.get("q", "")
+    if query:
+        integrantes = Integrante.objects.filter(
+            models.Q(nombre_completo__icontains=query) |
+            models.Q(puesto__icontains=query) |
+            models.Q(area__nombre__icontains=query)
+        ).order_by("area__nombre", "nombre_completo")
+    else:
+        integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
+
+    # Filtro de fechas para notas y acuerdos
+    fecha_filtro = request.GET.get("fecha_filtro", "ultimos")  # valores: ultimos, hoy, 7dias, 30dias, todos
+    ahora = datetime.now()
+
+    # Construir queryset base para notas y acuerdos
+    notas_qs = NotaDirectivo.objects.all()
+    acuerdos_qs = AcuerdoDirectivo.objects.all()
+
+    if fecha_filtro == "hoy":
+        notas_qs = notas_qs.filter(fecha_creacion__date=ahora.date())
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__date=ahora.date())
+    elif fecha_filtro == "7dias":
+        fecha_inicio = ahora - timedelta(days=7)
+        notas_qs = notas_qs.filter(fecha_creacion__gte=fecha_inicio)
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__gte=fecha_inicio)
+    elif fecha_filtro == "30dias":
+        fecha_inicio = ahora - timedelta(days=30)
+        notas_qs = notas_qs.filter(fecha_creacion__gte=fecha_inicio)
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__gte=fecha_inicio)
+    elif fecha_filtro == "todos":
+        pass  # usamos todos los registros
+    else:  # ultimos agregados por defecto
+        notas_qs = notas_qs.order_by('-fecha_creacion')[:10]
+        acuerdos_qs = acuerdos_qs.order_by('-fecha_creacion')[:10]
+
+    # SOLO ordenar si no hemos hecho slicing
+    if fecha_filtro in ["hoy", "7dias", "30dias", "todos"]:
+        notas_qs = notas_qs.order_by('-fecha_creacion')
+        acuerdos_qs = acuerdos_qs.order_by('-fecha_creacion')
+
     seleccionados_ids = request.session.get("integrantes_seleccionados", [])
     seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
     form = IntegranteForm()
@@ -198,24 +239,26 @@ def descarga_directiva(request):
     return render(request, "modulo/descarga_directivo.html", {
         "integrantes": integrantes,
         "seleccionados": seleccionados,
-        "notas": notas,
-        "acuerdos": acuerdos,
-        "form": form
+        "notas": notas_qs,
+        "acuerdos": acuerdos_qs,
+        "form": form,
+        "request": request,
+        "fecha_filtro": fecha_filtro
     })
 
 
-# ---------------- Funciones WORD ----------------
 
+
+# ---------------- Funciones WORD ----------------
 def descargar_word_directiva(request):
     if request.method != "POST":
         return HttpResponse("Método no permitido", status=405)
 
-    # Obtener IDs seleccionados desde el form
+    # Obtener IDs seleccionados desde el formulario
     integrantes_ids = request.POST.getlist("integrantes")
     notas_ids = request.POST.getlist("notas_seleccionadas")
     acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
 
-    # Traer objetos de la DB de manera segura
     try:
         integrantes = Integrante.objects.filter(id__in=integrantes_ids) if integrantes_ids else []
         notas = NotaDirectivo.objects.filter(id__in=notas_ids) if notas_ids else []
@@ -223,30 +266,34 @@ def descargar_word_directiva(request):
     except Exception as e:
         return HttpResponse(f"Error al obtener datos: {str(e)}", status=500)
 
-    # Ruta segura de la plantilla (igual que operativa, pero Directiva.docx)
+    # Ruta de la plantilla
     plantilla_path = os.path.join(settings.MEDIA_ROOT, 'plantillas', 'Directiva.docx')
     if not os.path.exists(plantilla_path):
         return HttpResponse("Plantilla no encontrada.", status=404)
 
     try:
-        # Cargar plantilla
         doc = Document(plantilla_path)
 
-        # Función para reemplazar texto simple en todos los runs (para marcadores sueltos)
+        # --- Función robusta para reemplazar marcador en cualquier run ---
         def reemplazar_marcador(doc, marcador, texto):
             for p in doc.paragraphs:
-                for run in p.runs:
-                    if marcador in run.text:
-                        run.text = run.text.replace(marcador, texto)
+                if marcador in "".join(run.text for run in p.runs):
+                    nuevo_texto = "".join(run.text for run in p.runs).replace(marcador, texto)
+                    for run in p.runs:
+                        run.text = ""
+                    p.add_run(nuevo_texto)
+
             for table in doc.tables:
                 for row in table.rows:
                     for cell in row.cells:
                         for p in cell.paragraphs:
-                            for run in p.runs:
-                                if marcador in run.text:
-                                    run.text = run.text.replace(marcador, texto)
+                            if marcador in "".join(run.text for run in p.runs):
+                                nuevo_texto = "".join(run.text for run in p.runs).replace(marcador, texto)
+                                for run in p.runs:
+                                    run.text = ""
+                                p.add_run(nuevo_texto)
 
-        # Función para reemplazar marcador con múltiples líneas (para integrantes y notas)
+        # --- Función para listas (integrantes y notas) ---
         def reemplazar_marcador_parrafos(doc, marcador, lista_textos):
             for p in doc.paragraphs:
                 if marcador in p.text:
@@ -262,20 +309,19 @@ def descargar_word_directiva(request):
                                 for texto in lista_textos:
                                     p.add_run(texto).add_break()
 
-        # Preparar listas de texto a insertar
+        # Preparar datos
         lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
         lista_notas = [f"- {n.texto}" for n in notas] or ["Sin notas seleccionadas"]
 
-        # Reemplazar integrantes y notas (uso de párrafos)
+        # Reemplazar secciones
         reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
         reemplazar_marcador_parrafos(doc, '{{notas}}', lista_notas)
 
-        # Fecha actual (misma forma que en operativa)
-        texto_fecha = timezone.now().strftime("Fecha: %d/%m/%Y")
-        reemplazar_marcador(doc, '{{fecha}}', texto_fecha)
+        # Fecha actual
+        fecha_actual = timezone.now().strftime("%d/%m/%Y")
+        reemplazar_marcador(doc, '{{fecha}}', fecha_actual)
 
-        # ---- Rellenar la tabla de acuerdos usando las filas existentes con el marcador {{acuerdos}} ----
-        # Buscamos la tabla y la primera fila donde aparezca '{{acuerdos}}'
+        # --- Rellenar tabla de acuerdos ---
         tabla_obj = None
         fila_inicio = None
         for t in doc.tables:
@@ -287,52 +333,35 @@ def descargar_word_directiva(request):
             if tabla_obj:
                 break
 
-        if tabla_obj is not None and fila_inicio is not None:
-            # llenamos desde fila_inicio hacia abajo con los acuerdos seleccionados
+        if tabla_obj and fila_inicio is not None:
             max_rows = len(tabla_obj.rows)
-            # número de filas disponibles para datos (incluye la fila que contiene marcador)
             filas_disponibles = max_rows - fila_inicio
 
-            # Rellenar hasta lo disponible
             for i, a in enumerate(acuerdos):
                 if i >= filas_disponibles:
-                    # Si hay más acuerdos que filas, ignoramos los extras (o podrías agregar filas con table.add_row())
                     break
                 target_row_index = fila_inicio + i
                 cells = tabla_obj.rows[target_row_index].cells
-                # columnas esperadas: [No., Compromiso, Responsable(s), Fecha límite]
-                # Aseguramos no acceder fuera de rango de celdas
+
                 if len(cells) >= 4:
-                    # dejar o actualizar la numeración (mejor usar el numerador del acuerdo)
                     cells[0].text = str(a.numerador) if a.numerador is not None else str(i + 1)
                     cells[1].text = a.acuerdo or ""
                     cells[2].text = (a.responsable.nombre_completo if a.responsable else "-")
                     cells[3].text = a.fecha_limite.strftime('%d/%m/%Y') if a.fecha_limite else "-"
                 else:
-                    # si la tabla tiene menos columnas, intentamos rellenar las que existan
-                    if len(cells) > 0:
-                        cells[0].text = a.acuerdo[:0]  # no hacer nada importante aquí
-            # Limpiar filas sobrantes (si se seleccionaron menos acuerdos que filas disponibles)
+                    for c in cells:
+                        c.text = ""
+
+            # Limpiar filas sobrantes
             llenadas = min(len(acuerdos), filas_disponibles)
             for j in range(fila_inicio + llenadas, fila_inicio + filas_disponibles):
                 if j >= max_rows:
                     break
                 cells = tabla_obj.rows[j].cells
-                # limpiar solo las columnas 1..3 (compromiso, responsable, fecha)
-                if len(cells) >= 4:
-                    cells[1].text = ""
-                    cells[2].text = ""
-                    cells[3].text = ""
-                else:
-                    # si menos columnas, limpiar todas las celdas
-                    for c in cells:
-                        c.text = ""
+                for c in cells:
+                    c.text = ""
 
-        else:
-            # No se encontró la tabla con el marcador {{acuerdos}} — no es crítico, solo continuar
-            pass
-
-        # Preparar respuesta para descarga (guardar directamente en la respuesta)
+        # --- Generar respuesta ---
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
