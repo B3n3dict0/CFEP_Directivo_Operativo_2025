@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 import json
 import io
 import os
@@ -156,19 +156,71 @@ def eliminar_acuerdo_operativo(request, acuerdo_id):
 
 # --- Descarga.html toda la logica para descargar pdf con formato -------------------------------------------------------
 
+
 def descarga(request):
-    integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
-    notas = Nota.objects.all().order_by("fecha_creacion")
-    acuerdos = AcuerdoOperativo.objects.all().order_by("fecha_creacion")
+    # ------------------------------
+    # Filtrado de búsqueda para integrantes
+    # ------------------------------
+    query = request.GET.get("q", "")
+    if query:
+        integrantes = Integrante.objects.filter(
+            models.Q(nombre_completo__icontains=query) |
+            models.Q(puesto__icontains=query) |
+            models.Q(area__nombre__icontains=query)
+        ).order_by("area__nombre", "nombre_completo")
+    else:
+        integrantes = Integrante.objects.all().order_by("area__nombre", "nombre_completo")
+
+    # ------------------------------
+    # Filtro de fechas para notas y acuerdos
+    # ------------------------------
+    fecha_filtro = request.GET.get("fecha_filtro", "ultimos")  # ultimos, hoy, 7dias, 30dias, todos
+    ahora = datetime.now()
+
+    # Querysets base
+    notas_qs = Nota.objects.all()
+    acuerdos_qs = AcuerdoOperativo.objects.all()
+
+    if fecha_filtro == "hoy":
+        notas_qs = notas_qs.filter(fecha_creacion__date=ahora.date())
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__date=ahora.date())
+    elif fecha_filtro == "7dias":
+        fecha_inicio = ahora - timedelta(days=7)
+        notas_qs = notas_qs.filter(fecha_creacion__gte=fecha_inicio)
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__gte=fecha_inicio)
+    elif fecha_filtro == "30dias":
+        fecha_inicio = ahora - timedelta(days=30)
+        notas_qs = notas_qs.filter(fecha_creacion__gte=fecha_inicio)
+        acuerdos_qs = acuerdos_qs.filter(fecha_creacion__gte=fecha_inicio)
+    elif fecha_filtro == "todos":
+        pass  # usamos todos los registros
+    else:  # ultimos agregados por defecto
+        notas_qs = notas_qs.order_by('-fecha_creacion')[:10]
+        acuerdos_qs = acuerdos_qs.order_by('-fecha_creacion')[:10]
+
+    # Ordenar si no usamos slicing
+    if fecha_filtro in ["hoy", "7dias", "30dias", "todos"]:
+        notas_qs = notas_qs.order_by('-fecha_creacion')
+        acuerdos_qs = acuerdos_qs.order_by('-fecha_creacion')
+
+    # ------------------------------
+    # Integrantes seleccionados desde sesión (opcional)
+    # ------------------------------
+    seleccionados_ids = request.session.get("integrantes_seleccionados", [])
+    seleccionados = Integrante.objects.filter(id__in=seleccionados_ids)
+
     form = IntegranteForm()
 
     return render(request, "modulo/descarga.html", {
         "integrantes": integrantes,
-        "seleccionados": [],
-        "notas": notas,
-        "acuerdos": acuerdos,
-        "form": form
+        "seleccionados": seleccionados,
+        "notas": notas_qs,
+        "acuerdos": acuerdos_qs,
+        "form": form,
+        "request": request,
+        "fecha_filtro": fecha_filtro
     })
+
 
 
 def descargar_word(request):
