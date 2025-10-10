@@ -158,15 +158,6 @@ def editar_acuerdo_directivo(request, id):
 
     return redirect("directivo_historial_acuerdos")
 
-# ----------------------------
-# ELIMINAR ACUERDO
-# ----------------------------
-@require_POST
-def eliminar_acuerdo_directivo(request, id):
-    acuerdo = get_object_or_404(AcuerdoDirectivo, id=id)
-    acuerdo.delete()
-    return redirect("directivo_historial_acuerdos")
-
 
 # ---------------- Selección y Descarga ----------------
 

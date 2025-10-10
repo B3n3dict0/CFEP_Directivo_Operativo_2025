@@ -9,8 +9,8 @@
         input[type="text"], input[type="number"], textarea { width: 100%; }
         form { margin: 0; }
         td { vertical-align: top; }
-        .acciones form { display: inline; }
         .acciones button { margin-right: 5px; }
+        .checkbox-cell input { pointer-events: none; } /* solo lectura si no se quiere editar */
     </style>
 </head>
 <body>
@@ -24,6 +24,8 @@
             <a href="{% url 'historial_acuerdo_operativo' %}">Limpiar</a>
         {% endif %}
     </form>
+
+    <br>
 
     <!-- Tabla de resultados -->
     <table border="1" cellpadding="5" cellspacing="0">
@@ -39,28 +41,29 @@
                 <th>Avance (%)</th>
                 <th>Comentario</th>
                 <th>Acciones</th>
-                <th>Eliminar datos</th>
                 <th>Fecha de Creación</th>
             </tr>
         </thead>
         <tbody>
             {% for acuerdo in acuerdos %}
             <tr>
-                <!-- Número y Unidad (solo mostrar, no editar) -->
+                <!-- Número y Unidad -->
                 <td>{{ acuerdo.numerador }}</td>
                 <td>{{ acuerdo.unidad }}</td>
 
-                <!-- Formulario de edición dentro de los campos editables -->
+                <!-- Formulario de edición -->
                 <form method="post" action="{% url 'editar_acuerdo_operativo' acuerdo.id %}">
                     {% csrf_token %}
                     <td>
                         <textarea name="acuerdo">{{ acuerdo.acuerdo }}</textarea>
                     </td>
-                    <td>
+                    <td class="checkbox-cell">
                         <input type="checkbox" name="unidad_parada" {% if acuerdo.unidad_parada %}checked{% endif %}>
                     </td>
                     <td>{{ acuerdo.fecha_limite|date:"d/m/Y" }}</td>
-                    <td>{% if acuerdo.pendiente %} Sí {% else %} No {% endif %}</td>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" name="pendiente" {% if acuerdo.pendiente %}checked{% endif %}>
+                    </td>
                     <td>{{ acuerdo.responsable.nombre_completo }}</td>
                     <td>
                         <input type="number" name="porcentaje_avance" value="{{ acuerdo.porcentaje_avance }}" min="0" max="100"
@@ -82,20 +85,12 @@
                     </td>
                 </form>
 
-                <!-- Botón de eliminar separado -->
-                <td class="acciones">
-                    <form method="post" action="{% url 'eliminar_acuerdo_operativo' acuerdo.id %}" onsubmit="return confirm('¿Deseas eliminar este acuerdo?')">
-                        {% csrf_token %}
-                        <button type="submit">Eliminar</button>
-                    </form>
-                </td>
-
                 <!-- Fecha de creación -->
                 <td>{{ acuerdo.fecha_creacion|date:"d/m/Y H:i" }}</td>
             </tr>
             {% empty %}
                 <tr>
-                    <td colspan="12">No hay acuerdos registrados.</td>
+                    <td colspan="11">No hay acuerdos registrados.</td>
                 </tr>
             {% endfor %}
         </tbody>

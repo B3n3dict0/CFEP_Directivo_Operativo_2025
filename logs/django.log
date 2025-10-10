@@ -212,3 +212,40 @@ Not Found: /favicon.ico
 "GET /usuarios/directivo/descarga/?fecha_filtro=todos HTTP/1.1" 200 7447
 "GET /logout/ HTTP/1.1" 302 0
 "GET / HTTP/1.1" 200 1251
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 1251
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2808
+"GET / HTTP/1.1" 200 1251
+"GET /signin/ HTTP/1.1" 200 1833
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 1929
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 2549
+"GET / HTTP/1.1" 200 1974
+C:\Users\Bened\Desktop\CRUD\directivo\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1251
+"GET /signin/ HTTP/1.1" 200 1833
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/directivo/ HTTP/1.1" 200 6320
+"GET /static/css/desarrollo_directivo.css HTTP/1.1" 200 7376
+"GET /static/css/integrantes.css HTTP/1.1" 200 6182
+"GET /static/js/cronometro_directivo.js HTTP/1.1" 200 2315
+"GET /static/js/integrantes_directivo.js HTTP/1.1" 200 3204
+"GET /static/js/crear_acuerdo_directivo.js HTTP/1.1" 200 1873
+"GET /static/js/notas_directivo.js HTTP/1.1" 200 4240
+"GET /usuarios/directivo/historial-acuerdos/ HTTP/1.1" 200 1671
+C:\Users\Bened\Desktop\CRUD\directivo\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\operativo\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\operativo\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/operativo/ HTTP/1.1" 200 6827
+"GET /usuarios/operativo/descarga/ HTTP/1.1" 200 8294
+"GET /usuarios/operativo/historial-acuerdo_operativo/ HTTP/1.1" 200 3102
+"GET /usuarios/operativo/ HTTP/1.1" 200 6827
+"GET /usuarios/operativo/historial-acuerdo_operativo/ HTTP/1.1" 200 3102

@@ -146,14 +146,6 @@ def editar_acuerdo_operativo(request, acuerdo_id):
     return redirect('historial_acuerdo_operativo')  # ✅ usar el name de la URL
 
 
-@require_POST
-def eliminar_acuerdo_operativo(request, acuerdo_id):
-    acuerdo = get_object_or_404(AcuerdoOperativo, id=acuerdo_id)
-    acuerdo.delete()
-    return redirect('historial_acuerdo_operativo')  # ✅ usar el name de la URL
-
-
-
 # --- Descarga.html toda la logica para descargar pdf con formato -------------------------------------------------------
 
 
