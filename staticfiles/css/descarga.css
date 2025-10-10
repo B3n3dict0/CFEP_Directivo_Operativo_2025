@@ -1,0 +1,281 @@
+/* descarga_operativa.css - Estilo moderno para Operativa */
+
+/* Variables de colores para consistencia */
+:root {
+  --primary-color: #8B4513; /* Marrón */
+  --secondary-color: #4CAF50; /* Verde */
+  --accent-color: #2196F3; /* Azul */
+  --light-color: #f9f9f9;
+  --dark-color: #333;
+  --border-color: #ddd;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Estilos generales */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  margin: 0;
+  padding: 20px;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+.integrantes {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Títulos principales */
+h2 {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--secondary-color);
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  position: relative;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background-color: var(--accent-color);
+}
+
+h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+h3::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--secondary-color);
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+/* Layout columnas */
+.integrantes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.columna-izquierda,
+.columna-derecha {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Secciones internas */
+.seccion {
+  background-color: var(--light-color);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: var(--transition);
+}
+
+.seccion:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* Formularios e inputs */
+.buscador-form .input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.input-text {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.input-text:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* Botones */
+.btn {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-buscar {
+  background-color: var(--secondary-color);
+  color: white;
+  min-width: 120px;
+}
+
+.btn-buscar:hover {
+  background-color: #3d8b40;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-secundario {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.btn-agregar {
+  background-color: var(--accent-color);
+  color: white;
+  width: 100%;
+}
+
+.btn-descargar-word {
+  background: linear-gradient(135deg, var(--primary-color), #a05a2c);
+  color: white;
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 30px;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+/* Select múltiple */
+.select-multiple {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+/* Lista de seleccionados */
+.seleccionados-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.contador {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.lista-seleccionados {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.lista-seleccionados li {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-seleccionados li:last-child {
+  border-bottom: none;
+}
+
+.mensaje-vacio {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 25px !important;
+}
+
+/* Sección filtros */
+.filtros-seccion {
+  background-color: var(--light-color);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border-left: 4px solid var(--accent-color);
+}
+
+/* Sección Notas */
+.seccion-notas { margin-bottom: 30px; }
+.contenedor-notas { display: flex; flex-direction: column; gap: 20px; }
+.nota-grupo { background-color: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+.nota-grupo h4 { background: linear-gradient(135deg, var(--primary-color), #a05a2c); color: white; margin: 0; padding: 12px 15px; }
+
+/* Sección Acuerdos */
+.seccion-acuerdos { margin-bottom: 30px; }
+.contenedor-acuerdos { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px; }
+.acuerdo-item { background-color: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: flex-start; }
+.acuerdo-item label { display: flex; align-items: flex-start; cursor: pointer; width: 100%; }
+.acuerdo-numero { display: inline-block; background-color: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-right: 10px; min-width: 30px; text-align: center; flex-shrink: 0; }
+.acuerdo-texto { flex: 1; margin: 0; line-height: 1.5; }
+.acuerdo-responsable { color: var(--accent-color); font-weight: 600; margin-top: 5px; display: block; font-size: 0.9rem; }
+
+/* Checkboxes */
+input[type="checkbox"] { transform: scale(1.3); accent-color: var(--secondary-color); margin-right: 12px; margin-top: 3px; }
+
+/* Scrollbars */
+.lista-seleccionados::-webkit-scrollbar,
+.select-multiple::-webkit-scrollbar { width: 8px; }
+.lista-seleccionados::-webkit-scrollbar-track,
+.select-multiple::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.lista-seleccionados::-webkit-scrollbar-thumb,
+.select-multiple::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .integrantes-grid { grid-template-columns: 1fr; gap: 20px; }
+  .contenedor-acuerdos { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  .integrantes { padding: 20px; }
+  .buscador-form .input-group { flex-direction: column; }
+  .btn-buscar { width: 100%; }
+}

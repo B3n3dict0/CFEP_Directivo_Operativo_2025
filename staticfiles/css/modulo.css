@@ -1,0 +1,100 @@
+/* Estilo general del formulario */
+form {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f7f9fc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Botón de guardar */
+form button[type="submit"] {
+    display: block;
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo de la tabla */
+#tabla-acuerdos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#tabla-acuerdos th, #tabla-acuerdos td {
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+}
+
+#tabla-acuerdos th {
+    background-color: #04ff00fe;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#tabla-acuerdos tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#tabla-acuerdos tbody tr:hover {
+    background-color: #e0f0ff;
+}
+
+/* Inputs y selects */
+#tabla-acuerdos input[type="text"],
+#tabla-acuerdos input[type="number"],
+#tabla-acuerdos input[type="date"],
+#tabla-acuerdos select {
+    width: 90%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Checkboxes centrados */
+#tabla-acuerdos input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+/* Botones de agregar/eliminar filas */
+.agregar-fila, .eliminar-fila {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+}
+
+.agregar-fila {
+    background-color: #28a745;
+}
+
+.agregar-fila:hover {
+    background-color: #218838;
+}
+
+.eliminar-fila {
+    background-color: #dc3545;
+}
+
+.eliminar-fila:hover {
+    background-color: #c82333;
+}

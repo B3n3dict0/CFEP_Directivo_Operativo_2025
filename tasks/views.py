@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from directivo.models import AcuerdoDirectivo, NotaDirectivo
 from .models import Task
 from .forms import TaskForm
 from django.contrib.auth.decorators import user_passes_test
@@ -136,3 +138,32 @@ def delete_task(request, task_id):
         task.delete()
         return redirect('tasks')
     ##############################################################################################
+    
+    
+# Solo el superusuario puede acceder al panel
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_directivo_panel(request):
+    notas = NotaDirectivo.objects.all().order_by('-fecha_creacion')
+    acuerdos = AcuerdoDirectivo.objects.all().order_by('-fecha_creacion')
+    return render(request, 'administrador/directivo_eliminar.html', {
+        'notas': notas,
+        'acuerdos': acuerdos
+    })
+
+
+# ✅ Eliminar una nota de forma segura (solo POST)
+@require_POST
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_nota_directivo(request, nota_id):
+    nota = get_object_or_404(NotaDirectivo, id=nota_id)
+    nota.delete()
+    return redirect('eliminar_directivo')
+
+
+# ✅ Eliminar un acuerdo de forma segura (solo POST)
+@require_POST
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_acuerdo_directivo(request, acuerdo_id):
+    acuerdo = get_object_or_404(AcuerdoDirectivo, id=acuerdo_id)
+    acuerdo.delete()
+    return redirect('eliminar_directivo')
