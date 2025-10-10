@@ -1,15 +1,18 @@
+import os
+from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from docx import Document
 from directivo.models import AcuerdoDirectivo, NotaDirectivo
+from djangocrud import settings
 from operativo.models import AcuerdoOperativo, Integrante, Nota
-from .models import Task
-from .forms import TaskForm
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
@@ -202,3 +205,72 @@ def eliminar_usuario(request, user_id):
     usuario.delete()
     messages.success(request, "Usuario eliminado correctamente")
     return redirect('gestionar_usuarios')
+
+
+# Listar archivos
+def listar_word(request):
+    carpeta_base = settings.RESPALDO_WORD_PATH
+    if not os.path.exists(carpeta_base):
+        return HttpResponse(f"La carpeta de respaldo no existe: {carpeta_base}")
+
+    archivos = []
+    for root, dirs, files in os.walk(carpeta_base):
+        for f in files:
+            if f.lower().endswith(".docx"):
+                ruta_relativa = os.path.relpath(os.path.join(root, f), carpeta_base)
+                archivos.append(ruta_relativa)
+
+    return render(request, "word_directivo.html", {"archivos": archivos})
+
+# Descargar archivo
+def descargar_word(request, nombre_archivo):
+    ruta_archivo = os.path.join(settings.RESPALDO_WORD_PATH, nombre_archivo)
+    if os.path.exists(ruta_archivo):
+        return FileResponse(open(ruta_archivo, "rb"), as_attachment=True)
+    else:
+        return HttpResponse("Archivo no encontrado", status=404)
+
+
+# Eliminar archivo
+def eliminar_word(request, nombre_archivo):
+    ruta_archivo = os.path.join(settings.RESPALDO_WORD_PATH, nombre_archivo)
+    if os.path.exists(ruta_archivo):
+        os.remove(ruta_archivo)
+        return HttpResponseRedirect(reverse('listar_word'))
+    else:
+        return HttpResponse("Archivo no encontrado", status=404)
+    
+    
+
+
+# ---------------- Funciones WORD OPERATIVO ----------------
+def listar_word_operativo(request):
+    carpeta_base = settings.RESPALDO_WORD_OPERATIVO_PATH
+    if not os.path.exists(carpeta_base):
+        return HttpResponse(f"La carpeta de respaldo no existe: {carpeta_base}")
+
+    archivos = []
+    for root, dirs, files in os.walk(carpeta_base):
+        for f in files:
+            if f.lower().endswith(".docx"):
+                ruta_relativa = os.path.relpath(os.path.join(root, f), carpeta_base)
+                archivos.append(ruta_relativa)
+
+    return render(request, "word_operativo.html", {"archivos": archivos})
+
+
+def descargar_word_operativo(request, nombre_archivo):
+    ruta_archivo = os.path.join(settings.RESPALDO_WORD_OPERATIVO_PATH, nombre_archivo)
+    if os.path.exists(ruta_archivo):
+        return FileResponse(open(ruta_archivo, "rb"), as_attachment=True)
+    else:
+        return HttpResponse("Archivo no encontrado", status=404)
+
+
+def eliminar_word_operativo(request, nombre_archivo):
+    ruta_archivo = os.path.join(settings.RESPALDO_WORD_OPERATIVO_PATH, nombre_archivo)
+    if os.path.exists(ruta_archivo):
+        os.remove(ruta_archivo)
+        return HttpResponseRedirect(reverse('listar_word_operativo'))
+    else:
+        return HttpResponse("Archivo no encontrado", status=404)

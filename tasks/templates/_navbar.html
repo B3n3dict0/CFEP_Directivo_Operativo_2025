@@ -12,6 +12,7 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <!-- Home siempre visible -->
@@ -20,37 +21,47 @@
         </li>
 
         {% if user.is_authenticated %}
-          {% if user.is_superuser or user.is_staff %}
-            <!-- Crear usuario -->
-            <li class="nav-item">
-              <a href="{% url 'signup' %}" class="nav-link">Create User</a>
-            </li>
+            {% if user.is_superuser or user.is_staff %}
+                <!-- Crear usuario -->
+                <li class="nav-item">
+                  <a href="{% url 'signup' %}" class="nav-link">Create User</a>
+                </li>
 
-            <!-- Gestionar usuarios -->
-            <li class="nav-item">
-              <a href="{% url 'gestionar_usuarios' %}" class="nav-link text-info">Gestionar Usuarios</a>
-            </li>
+                <!-- Gestionar usuarios -->
+                <li class="nav-item">
+                  <a href="{% url 'gestionar_usuarios' %}" class="nav-link text-info">Gestionar Usuarios</a>
+                </li>
 
-            <!-- Panel de eliminación Directivo -->
-            <li class="nav-item">
-              <a href="{% url 'eliminar_directivo' %}" class="nav-link text-danger">Eliminar Directivo</a>
-            </li>
+                <!-- Panel de eliminación Directivo -->
+                <li class="nav-item">
+                  <a href="{% url 'eliminar_directivo' %}" class="nav-link text-danger">Eliminar Directivo</a>
+                </li>
 
-            <!-- Panel de eliminación Operativo -->
-            <li class="nav-item">
-              <a href="{% url 'eliminar_operativo_panel' %}" class="nav-link text-warning">Eliminar Operativo</a>
-            </li>
-          {% endif %}
+                <!-- Panel de eliminación Operativo -->
+                <li class="nav-item">
+                  <a href="{% url 'eliminar_operativo_panel' %}" class="nav-link text-warning">Eliminar Operativo</a>
+                </li>
 
-          <!-- Logout -->
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-          </li>
+                <!-- Word respaldo directivo-->
+                <li class="nav-item">
+                  <a href="{% url 'listar_word' %}" class="nav-link text-success">Respaldo Word</a>
+                </li>
+
+                <!-- Word respaldo operativo-->
+                <li class="nav-item">
+                  <a href="{% url 'listar_word_operativo' %}" class="nav-link text-success">Respaldo Word</a>
+                </li>
+            {% endif %}
+
+            <!-- Logout -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
         {% else %}
-          <!-- Login para usuarios no autenticados -->
-          <li class="nav-item">
-            <a href="{% url 'signin' %}" class="nav-link">Login</a>
-          </li>
+            <!-- Login para usuarios no autenticados -->
+            <li class="nav-item">
+              <a href="{% url 'signin' %}" class="nav-link">Login</a>
+            </li>
         {% endif %}
       </ul>
     </div>

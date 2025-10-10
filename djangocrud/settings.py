@@ -140,3 +140,9 @@ LOGGING = {
         },
     },
 }
+
+# settings.py
+RESPALDO_WORD_PATH = os.path.join(BASE_DIR, "respaldo_word_directivo")
+RESPALDO_WORD_OPERATIVO_PATH = os.path.join(BASE_DIR, "respaldo_word_operativo")
+
+

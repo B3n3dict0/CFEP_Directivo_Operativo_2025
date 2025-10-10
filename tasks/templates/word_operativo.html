@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Archivos de Respaldo Word Operativo</h1>
+<ul>
+    {% for archivo in archivos %}
+        <li>
+            {{ archivo }}
+            <a href="{% url 'descargar_word_operativo' archivo %}">Descargar</a> |
+            <a href="{% url 'eliminar_word_operativo' archivo %}" onclick="return confirm('¿Seguro que quieres eliminar este archivo?');">Eliminar</a>
+        </li>
+    {% empty %}
+        <li>No hay archivos disponibles</li>
+    {% endfor %}
+</ul>
+{% endblock %}

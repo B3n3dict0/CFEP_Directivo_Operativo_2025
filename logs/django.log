@@ -490,3 +490,376 @@ Watching for file changes with StatReloader
 "GET /usuarios/menu/ HTTP/1.1" 200 1095
 "GET /logout/ HTTP/1.1" 302 0
 "GET / HTTP/1.1" 200 1344
+Watching for file changes with StatReloader
+"GET / HTTP/1.1" 200 1344
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2808
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/directivo/ HTTP/1.1" 200 6320
+"GET /usuarios/directivo/descarga/ HTTP/1.1" 200 7447
+"GET /static/css/descarga_directivo.css HTTP/1.1" 200 11398
+"POST /usuarios/directivo/descargar_word_directiva/ HTTP/1.1" 200 138730
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\operativo\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/operativo/ HTTP/1.1" 200 6827
+"GET /usuarios/operativo/descarga/ HTTP/1.1" 200 8294
+"POST /usuarios/operativo/descargar-word/ HTTP/1.1" 200 135629
+C:\Users\Bened\Desktop\CRUD\operativo\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\directivo\views.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /usuarios/operativo/descargar-word/ HTTP/1.1" 200 135629
+"GET /usuarios/directivo/ HTTP/1.1" 200 6319
+"GET /usuarios/directivo/descarga/ HTTP/1.1" 200 7447
+"POST /usuarios/directivo/descargar_word_directiva/ HTTP/1.1" 200 138662
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\djangocrud\settings.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /usuarios/operativo/ HTTP/1.1" 200 6826
+"GET /usuarios/operativo/descarga/ HTTP/1.1" 200 8294
+"POST /usuarios/operativo/descargar-word/ HTTP/1.1" 200 135681
+"GET /logout/ HTTP/1.1" 302 0
+Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 51, in home
+    return render(request, 'home.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\backends\django.py", line 62, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 197, in render
+    template = context.template.engine.select_template(template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 206, in select_template
+    return self.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 568, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 65: 'else'. Did you forget to register or load this tag?
+"GET / HTTP/1.1" 500 187944
+Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'else'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 51, in home
+    return render(request, 'home.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\backends\django.py", line 62, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 197, in render
+    template = context.template.engine.select_template(template_name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 206, in select_template
+    return self.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 568, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 65: 'else'. Did you forget to register or load this tag?
+"GET / HTTP/1.1" 500 187779
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2808
+"GET / HTTP/1.1" 200 1353
+"GET /signin/ HTTP/1.1" 200 1935
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2326
+Internal Server Error: /tasks/word/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 215, in listar_word
+    archivos = [f for f in os.listdir(carpeta) if f.endswith(".docx")]
+                           ^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:/respaldo_word_directivo'
+"GET /tasks/word/ HTTP/1.1" 500 73591
+Internal Server Error: /tasks/word/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 215, in listar_word
+    archivos = [f for f in os.listdir(carpeta) if f.endswith(".docx")]
+                           ^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:/respaldo_word_directivo'
+"GET /tasks/word/ HTTP/1.1" 500 73728
+C:\Users\Bened\Desktop\CRUD\djangocrud\settings.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 256
+"GET /tasks/word/ HTTP/1.1" 200 256
+"GET /tasks/word/ HTTP/1.1" 200 256
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1353
+"GET /signin/ HTTP/1.1" 200 1935
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/operativo/ HTTP/1.1" 200 6826
+"GET /usuarios/operativo/descarga/ HTTP/1.1" 200 8294
+"POST /usuarios/operativo/descargar-word/ HTTP/1.1" 200 135681
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1353
+"GET /signin/ HTTP/1.1" 200 1935
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2326
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /tasks/word/ HTTP/1.1" 200 2578
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1353
+"GET /signin/ HTTP/1.1" 200 1935
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /usuarios/directivo/ HTTP/1.1" 200 6319
+"GET /usuarios/directivo/descarga/ HTTP/1.1" 200 7447
+"POST /usuarios/directivo/descargar_word_directiva/ HTTP/1.1" 200 138662
+C:\Users\Bened\Desktop\CRUD\directivo\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /usuarios/directivo/descarga/ HTTP/1.1" 200 7447
+"POST /usuarios/directivo/descargar_word_directiva/ HTTP/1.1" 200 138662
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1353
+"GET /signin/ HTTP/1.1" 200 1935
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2326
+"GET /tasks/word/ HTTP/1.1" 200 2578
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2737
+"GET /tasks/word/ HTTP/1.1" 200 2685
+"GET /tasks/word/ver/2025-10%5CMinuta_Directiva_20251010_192436.docx/ HTTP/1.1" 200 57
+"GET /tasks/word/ver/2025-10%5CMinuta_Directiva_20251010_192436.docx/ HTTP/1.1" 200 57
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2863
+"GET /tasks/word/ver/2025-10%5CMinuta_Directiva_20251010_192436.docx/ HTTP/1.1" 200 57
+"GET /tasks/word/descargar/2025-10%5CMinuta_Directiva_20251010_192436.docx/ HTTP/1.1" 200 137974
+"GET /tasks/word/ver/2025-10%5CMinuta_Directiva_20251010_192436.docx/ HTTP/1.1" 200 57
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2750
+"GET /tasks/word/ HTTP/1.1" 200 2750
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15467
+"GET /tasks/word/ HTTP/1.1" 200 2750
+C:\Users\Bened\Desktop\CRUD\djangocrud\settings.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/word/ HTTP/1.1" 200 2929
+"GET /tasks/word/ HTTP/1.1" 200 2929
+Internal Server Error: /tasks/operativo/word/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 248, in listar_word_operativo
+    carpeta_base = settings.RESPALDO_WORD_OPERATIVO_PATH
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'djangocrud.settings' has no attribute 'RESPALDO_WORD_OPERATIVO_PATH'
+"GET /tasks/operativo/word/ HTTP/1.1" 500 73610
+Internal Server Error: /tasks/operativo/word/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 248, in listar_word_operativo
+    carpeta_base = settings.RESPALDO_WORD_OPERATIVO_PATH
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'djangocrud.settings' has no attribute 'RESPALDO_WORD_OPERATIVO_PATH'
+"GET /tasks/operativo/word/ HTTP/1.1" 500 73747
+C:\Users\Bened\Desktop\CRUD\djangocrud\settings.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/operativo/word/ HTTP/1.1" 200 2949

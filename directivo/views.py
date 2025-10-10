@@ -239,7 +239,6 @@ def descarga_directiva(request):
 
 
 
-
 # ---------------- Funciones WORD ----------------
 def descargar_word_directiva(request):
     if request.method != "POST":
@@ -300,7 +299,7 @@ def descargar_word_directiva(request):
                                 for texto in lista_textos:
                                     p.add_run(texto).add_break()
 
-        # Preparar datos
+        # Preparar listas de texto
         lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
         lista_notas = [f"- {n.texto}" for n in notas] or ["Sin notas seleccionadas"]
 
@@ -352,11 +351,21 @@ def descargar_word_directiva(request):
                 for c in cells:
                     c.text = ""
 
-        # --- Generar respuesta ---
+        # --- Crear carpeta de respaldo y guardar copia ---
+        backup_base = os.path.join(settings.BASE_DIR, 'respaldo_word_directivo')
+        mes_actual = timezone.now().strftime("%Y-%m")
+        backup_folder = os.path.join(backup_base, mes_actual)
+        os.makedirs(backup_folder, exist_ok=True)
+
+        nombre_archivo_usuario = f"Minuta_Directiva_{timezone.now().strftime('%Y%m%d_%H%M%S')}.docx"
+        backup_path = os.path.join(backup_folder, nombre_archivo_usuario)
+        doc.save(backup_path)
+
+        # --- Generar respuesta para descarga ---
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-        response['Content-Disposition'] = 'attachment; filename=Minuta_Directiva.docx'
+        response['Content-Disposition'] = f'attachment; filename={nombre_archivo_usuario}'
         doc.save(response)
         return response
 

@@ -214,7 +214,6 @@ def descarga(request):
     })
 
 
-
 def descargar_word(request):
     if request.method != "POST":
         return HttpResponse("Método no permitido", status=405)
@@ -223,6 +222,11 @@ def descargar_word(request):
     integrantes_ids = request.POST.getlist("integrantes")
     notas_ids = request.POST.getlist("notas_seleccionadas")
     acuerdos_ids = request.POST.getlist("acuerdos_seleccionados")
+
+    # Obtener nombre personalizado del archivo (opcional)
+    nombre_archivo_usuario = request.POST.get("nombre_archivo", "Minuta_Operativa")
+    if not nombre_archivo_usuario.endswith(".docx"):
+        nombre_archivo_usuario += ".docx"
 
     # Traer objetos de la DB de manera segura
     try:
@@ -238,10 +242,9 @@ def descargar_word(request):
         return HttpResponse("Plantilla no encontrada.", status=404)
 
     try:
-        # Cargar plantilla
         doc = Document(plantilla_path)
 
-        # Función para reemplazar texto simple en todos los runs (para acuerdos y fecha)
+        # Funciones para reemplazo de marcadores
         def reemplazar_marcador(doc, marcador, texto):
             for p in doc.paragraphs:
                 for run in p.runs:
@@ -255,7 +258,6 @@ def descargar_word(request):
                                 if marcador in run.text:
                                     run.text = run.text.replace(marcador, texto)
 
-        # Función para reemplazar marcador con múltiples líneas (para integrantes y notas)
         def reemplazar_marcador_parrafos(doc, marcador, lista_textos):
             for p in doc.paragraphs:
                 if marcador in p.text:
@@ -271,13 +273,10 @@ def descargar_word(request):
                                 for texto in lista_textos:
                                     p.add_run(texto).add_break()
 
-        # Preparar listas de texto a insertar
+        # Preparar listas de texto
         lista_integrantes = [f"- {i.nombre_completo} ({i.puesto})" for i in integrantes] or ["Sin integrantes seleccionados"]
-
-        # Notas sin fechas
         lista_notas = [f"- {n.texto}" for n in notas] or ["Sin notas seleccionadas"]
 
-        # Acuerdos: todos los campos, separados por comas
         lista_acuerdos = []
         if acuerdos:
             for a in acuerdos:
@@ -288,25 +287,30 @@ def descargar_word(request):
         else:
             lista_acuerdos = ["Sin acuerdos seleccionados"]
 
-        # Fecha actual
         texto_fecha = timezone.now().strftime("%d/%m/%Y")
 
-        # Reemplazar marcadores en el documento
         reemplazar_marcador_parrafos(doc, '{{integrantes}}', lista_integrantes)
         reemplazar_marcador_parrafos(doc, '{{notas}}', lista_notas)
         reemplazar_marcador(doc, '{{acuerdos}}', "\n".join(lista_acuerdos))
         reemplazar_marcador(doc, '{{fecha}}', texto_fecha)
 
-        # Preparar respuesta para descarga
+        # Crear carpeta de respaldo dentro del proyecto, organizada por año/mes
+        backup_base = os.path.join(settings.BASE_DIR, 'respaldo_word_operativo')
+        mes_actual = timezone.now().strftime("%Y-%m")
+        backup_folder = os.path.join(backup_base, mes_actual)
+        os.makedirs(backup_folder, exist_ok=True)
+
+        # Guardar copia de seguridad
+        backup_path = os.path.join(backup_folder, f"{nombre_archivo_usuario}")
+        doc.save(backup_path)
+
+        # Preparar respuesta para descarga al usuario
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-        response['Content-Disposition'] = 'attachment; filename=Minuta_Operativa.docx'
+        response['Content-Disposition'] = f'attachment; filename={nombre_archivo_usuario}'
         doc.save(response)
         return response
 
     except Exception as e:
         return HttpResponse(f"Error al generar Word: {str(e)}", status=500)
-
-
-

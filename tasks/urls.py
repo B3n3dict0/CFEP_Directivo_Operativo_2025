@@ -20,4 +20,16 @@ urlpatterns = [
     path('eliminar_operativo/integrante/<int:integrante_id>/', views.eliminar_integrante, name='eliminar_integrante'),
     path('eliminar_operativo/nota/<int:nota_id>/', views.eliminar_nota, name='eliminar_nota'),
     path('eliminar_operativo/acuerdo/<int:acuerdo_id>/', views.eliminar_acuerdo, name='eliminar_acuerdo'),
+    
+    # panel de directivo del word respaldo
+    path("word/", views.listar_word, name="listar_word"),
+    path("word/descargar/<str:nombre_archivo>/", views.descargar_word, name="descargar_word"),
+    path("word/eliminar/<path:nombre_archivo>/", views.eliminar_word, name="eliminar_word"),
+    
+    # panel de operativo del word respaldo
+    path('operativo/word/', views.listar_word_operativo, name='listar_word_operativo'),
+    path('operativo/word/descargar/<str:nombre_archivo>/', views.descargar_word_operativo, name='descargar_word_operativo'),
+    path('operativo/word/eliminar/<str:nombre_archivo>/', views.eliminar_word_operativo, name='eliminar_word_operativo'),
+
+
 ]
