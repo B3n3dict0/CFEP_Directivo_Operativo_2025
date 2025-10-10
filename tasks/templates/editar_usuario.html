@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Editar Usuario: {{ usuario.username }}</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="username" class="form-label">Nombre de usuario</label>
+    <input type="text" name="username" id="username" class="form-control" value="{{ usuario.username }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Nueva contraseña (opcional)</label>
+    <input type="password" name="password" id="password" class="form-control">
+  </div>
+  <button type="submit" class="btn btn-success">Guardar cambios</button>
+  <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

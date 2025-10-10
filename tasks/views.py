@@ -7,9 +7,14 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from directivo.models import AcuerdoDirectivo, NotaDirectivo
+from operativo.models import AcuerdoOperativo, Integrante, Nota
 from .models import Task
 from .forms import TaskForm
 from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 
 # Create your views here.
 # Solo superusuarios o staff pueden acceder
@@ -23,7 +28,7 @@ def signup(request):
                 user = User.objects.create_user(
                     request.POST["username"], password=request.POST["password1"])
                 user.save()
-                return redirect('tasks')  # Redirige a donde quieras después de crear el usuario
+                return redirect('admin_dashboard')  # Redirige a donde quieras después de crear el usuario
             except IntegrityError:
                 return render(
                     request,
@@ -36,31 +41,6 @@ def signup(request):
                 'signup.html',
                 {"form": UserCreationForm, "error": "Passwords did not match."}
             )
-
-@login_required
-def tasks(request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
-    return render(request, 'tasks.html', {"tasks": tasks})
-
-@login_required
-def tasks_completed(request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
-    return render(request, 'tasks.html', {"tasks": tasks})
-
-
-@login_required
-def create_task(request):
-    if request.method == "GET":
-        return render(request, 'create_task.html', {"form": TaskForm})
-    else:
-        try:
-            form = TaskForm(request.POST)
-            new_task = form.save(commit=False)
-            new_task.user = request.user
-            new_task.save()
-            return redirect('tasks')
-        except ValueError:
-            return render(request, 'create_task.html', {"form": TaskForm, "error": "Error creating task."})
 
 
 def home(request):
@@ -105,41 +85,10 @@ def admin_dashboard(request):
 def menu_usuario(request):
     return render(request, 'usuarios/menu.html')
 
-
-
-# No mover por el momento este apartado ####################
-@login_required
-def task_detail(request, task_id):
-    if request.method == 'GET':
-        task = get_object_or_404(Task, pk=task_id, user=request.user)
-        form = TaskForm(instance=task)
-        return render(request, 'task_detail.html', {'task': task, 'form': form})
-    else:
-        try:
-            task = get_object_or_404(Task, pk=task_id, user=request.user)
-            form = TaskForm(request.POST, instance=task)
-            form.save()
-            return redirect('tasks')
-        except ValueError:
-            return render(request, 'task_detail.html', {'task': task, 'form': form, 'error': 'Error updating task.'})
-
-@login_required
-def complete_task(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-    if request.method == 'POST':
-        task.datecompleted = timezone.now()
-        task.save()
-        return redirect('tasks')
-
-@login_required
-def delete_task(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-    if request.method == 'POST':
-        task.delete()
-        return redirect('tasks')
-    ##############################################################################################
     
     
+    
+# ------------------------------------------ directivo --------------------------------------------------------------    
 # Solo el superusuario puede acceder al panel
 @user_passes_test(lambda u: u.is_superuser)
 def eliminar_directivo_panel(request):
@@ -167,3 +116,89 @@ def eliminar_acuerdo_directivo(request, acuerdo_id):
     acuerdo = get_object_or_404(AcuerdoDirectivo, id=acuerdo_id)
     acuerdo.delete()
     return redirect('eliminar_directivo')
+
+# ----------------------------------- operativo ------------------------------
+
+
+# Panel de eliminación Operativo
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_operativo_panel(request):
+    integrantes = Integrante.objects.all().order_by('nombre_completo')
+    notas = Nota.objects.all().order_by('-fecha_creacion')
+    acuerdos = AcuerdoOperativo.objects.all().order_by('-fecha_creacion')
+    return render(request, 'administrador/operativo_eliminar.html', {
+        'integrantes': integrantes,
+        'notas': notas,
+        'acuerdos': acuerdos
+    })
+
+# Eliminar Integrante
+@require_POST
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_integrante(request, integrante_id):
+    integrante = get_object_or_404(Integrante, id=integrante_id)
+    integrante.delete()
+    return redirect('eliminar_operativo_panel')
+
+# Eliminar Nota
+@require_POST
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_nota(request, nota_id):
+    nota = get_object_or_404(Nota, id=nota_id)
+    nota.delete()
+    return redirect('eliminar_operativo_panel')
+
+# Eliminar Acuerdo Operativo
+@require_POST
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_acuerdo(request, acuerdo_id):
+    acuerdo = get_object_or_404(AcuerdoOperativo, id=acuerdo_id)
+    acuerdo.delete()
+    return redirect('eliminar_operativo_panel')
+
+
+
+# ------------------- usuarios --------------------------
+
+
+
+# Ver usuarios
+def gestionar_usuarios(request):
+    if not request.user.is_superuser:
+        messages.error(request, "No tienes permisos para acceder a esta sección")
+        return redirect('home')
+
+    usuarios = User.objects.all()
+    return render(request, 'gestionar_usuarios.html', {'usuarios': usuarios})
+
+# Editar usuario
+def editar_usuario(request, user_id):
+    if not request.user.is_superuser:
+        messages.error(request, "No tienes permisos para acceder a esta sección")
+        return redirect('home')
+
+    usuario = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        nuevo_nombre = request.POST.get('username')
+        nueva_contrasena = request.POST.get('password')
+
+        usuario.username = nuevo_nombre
+        if nueva_contrasena:
+            usuario.set_password(nueva_contrasena)
+        usuario.save()
+        messages.success(request, "Usuario actualizado correctamente")
+        return redirect('gestionar_usuarios')
+
+    return render(request, 'editar_usuario.html', {'usuario': usuario})
+
+# Eliminar usuario
+def eliminar_usuario(request, user_id):
+    if not request.user.is_superuser:
+        messages.error(request, "No tienes permisos para acceder a esta sección")
+        return redirect('home')
+
+    usuario = get_object_or_404(User, id=user_id)
+    usuario.delete()
+    messages.success(request, "Usuario eliminado correctamente")
+    return redirect('gestionar_usuarios')

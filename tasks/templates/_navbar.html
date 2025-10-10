@@ -14,36 +14,40 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+        <!-- Home siempre visible -->
         <li class="nav-item">
           <a href="/" class="nav-link">Home</a>
         </li>
 
         {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a href="{% url 'tasks_completed' %}" class="nav-link">Completed Tasks</a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'tasks' %}" class="nav-link">Tasks</a>
-          </li>
-
           {% if user.is_superuser or user.is_staff %}
+            <!-- Crear usuario -->
             <li class="nav-item">
               <a href="{% url 'signup' %}" class="nav-link">Create User</a>
             </li>
 
-            <!-- ✅ Enlace correcto al panel de eliminación Directivo -->
+            <!-- Gestionar usuarios -->
+            <li class="nav-item">
+              <a href="{% url 'gestionar_usuarios' %}" class="nav-link text-info">Gestionar Usuarios</a>
+            </li>
+
+            <!-- Panel de eliminación Directivo -->
             <li class="nav-item">
               <a href="{% url 'eliminar_directivo' %}" class="nav-link text-danger">Eliminar Directivo</a>
             </li>
+
+            <!-- Panel de eliminación Operativo -->
+            <li class="nav-item">
+              <a href="{% url 'eliminar_operativo_panel' %}" class="nav-link text-warning">Eliminar Operativo</a>
+            </li>
           {% endif %}
 
-          <li class="nav-item">
-            <a href="{% url 'create_task' %}" class="nav-link">Create Task</a>
-          </li>
+          <!-- Logout -->
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>
         {% else %}
+          <!-- Login para usuarios no autenticados -->
           <li class="nav-item">
             <a href="{% url 'signin' %}" class="nav-link">Login</a>
           </li>

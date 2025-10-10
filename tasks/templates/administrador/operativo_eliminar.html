@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Datos Operativo</title>
+    <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+    <style>
+        table { width: 90%; margin: 20px auto; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        h2 { text-align: center; margin-top: 40px; }
+        button { padding: 5px 10px; background-color: #e74c3c; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #c0392b; }
+    </style>
+</head>
+<body>
+
+    <!-- Integrantes -->
+    <h2>Integrantes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Puesto</th>
+                <th>Área</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for integrante in integrantes %}
+            <tr>
+                <td>{{ integrante.nombre_completo }}</td>
+                <td>{{ integrante.puesto }}</td>
+                <td>{{ integrante.area.nombre }}</td>
+                <td>
+                    <form method="post" action="{% url 'eliminar_integrante' integrante.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay integrantes registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Notas -->
+    <h2>Notas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Apartado</th>
+                <th>Texto</th>
+                <th>Fecha Creación</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nota in notas %}
+            <tr>
+                <td>{{ nota.get_apartado_display }}</td>
+                <td>{{ nota.texto|truncatechars:50 }}</td>
+                <td>{{ nota.fecha_creacion }}</td>
+                <td>
+                    <form method="post" action="{% url 'eliminar_nota' nota.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No hay notas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Acuerdos Operativos -->
+    <h2>Acuerdos Operativos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Acuerdo</th>
+                <th>Responsable</th>
+                <th>Porcentaje Avance</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acuerdo in acuerdos %}
+            <tr>
+                <td>{{ acuerdo.numerador }}</td>
+                <td>{{ acuerdo.acuerdo|truncatechars:50 }}</td>
+                <td>{{ acuerdo.responsable.nombre_completo }}</td>
+                <td>{{ acuerdo.porcentaje_avance }}%</td>
+                <td>
+                    <form method="post" action="{% url 'eliminar_acuerdo' acuerdo.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No hay acuerdos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
+{% endblock %}

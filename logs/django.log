@@ -249,3 +249,244 @@ Watching for file changes with StatReloader
 "GET /usuarios/operativo/historial-acuerdo_operativo/ HTTP/1.1" 200 3102
 "GET /usuarios/operativo/ HTTP/1.1" 200 6827
 "GET /usuarios/operativo/historial-acuerdo_operativo/ HTTP/1.1" 200 3102
+Watching for file changes with StatReloader
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2283
+Internal Server Error: /tasks/eliminar_operativo/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 181, in eliminar_operativo_panel
+    return render(request, 'operativo/operativo_eliminar.html', {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: operativo/operativo_eliminar.html
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 500 100144
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 13145
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2283
+Internal Server Error: /tasks/eliminar_directivo/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 149, in eliminar_directivo_panel
+    return render(request, 'administrador/directivo_eliminar.html', {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 175, in get_template
+    template, origin = self.find_template(template_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\engine.py", line 157, in find_template
+    template = loader.get_template(name, skip=skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+           ^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+               ^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 518, in parse
+    self.unclosed_block_tag(parse_until)
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\template\base.py", line 581, in unclosed_block_tag
+    raise self.error(token, msg)
+django.template.exceptions.TemplateSyntaxError: Unclosed tag on line 3: 'block'. Looking for one of: endblock.
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 500 180820
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4828
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4828
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15424
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4828
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4774
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15424
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2283
+"GET /tasks/create/ HTTP/1.1" 200 3114
+"GET /signup/ HTTP/1.1" 200 3659
+"GET /tasks/ HTTP/1.1" 200 2311
+"GET /tasks/completed/ HTTP/1.1" 200 2311
+"GET /tasks/create/ HTTP/1.1" 200 3114
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4774
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4357
+"GET /signup/ HTTP/1.1" 200 3242
+"GET / HTTP/1.1" 200 1911
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15007
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4357
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4357
+"GET /signup/ HTTP/1.1" 200 3242
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\urls.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /signup/ HTTP/1.1" 200 3436
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3406
+"GET /tasks/usuarios/eliminar/3/ HTTP/1.1" 302 0
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3056
+"GET /tasks/usuarios/editar/2/ HTTP/1.1" 200 2782
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3056
+"GET /signup/ HTTP/1.1" 200 3436
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2060
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3056
+"GET /signup/ HTTP/1.1" 200 3436
+Internal Server Error: /signup/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 31, in signup
+    return redirect('tasks')  # Redirige a donde quieras después de crear el usuario
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 48, in redirect
+    return redirect_class(resolve_url(to, *args, **kwargs))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 145, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\urls\resolvers.py", line 803, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'tasks' not found. 'tasks' is not a valid view function or pattern name.
+"POST /signup/ HTTP/1.1" 500 98027
+"POST /signup/ HTTP/1.1" 200 3460
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3406
+"GET /signup/ HTTP/1.1" 200 3436
+Internal Server Error: /signup/
+Traceback (most recent call last):
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\tasks\views.py", line 31, in signup
+    return redirect('tasks')  # Redirige a donde quieras después de crear el usuario
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 48, in redirect
+    return redirect_class(resolve_url(to, *args, **kwargs))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\shortcuts.py", line 145, in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\urls\base.py", line 88, in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Bened\Desktop\CRUD\.venv\Lib\site-packages\django\urls\resolvers.py", line 803, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'tasks' not found. 'tasks' is not a valid view function or pattern name.
+"POST /signup/ HTTP/1.1" 500 98019
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\Bened\Desktop\CRUD\tasks\views.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /signup/ HTTP/1.1" 200 3460
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3754
+"GET /tasks/usuarios/eliminar/6/ HTTP/1.1" 302 0
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3406
+"GET /signup/ HTTP/1.1" 200 3436
+"POST /signup/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2060
+"GET /signup/ HTTP/1.1" 200 3436
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 302 0
+"GET /tasks/admin_dashboard/ HTTP/1.1" 200 2060
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3754
+"GET /tasks/usuarios/eliminar/8/ HTTP/1.1" 302 0
+"GET /tasks/usuarios/gestionar/ HTTP/1.1" 200 3406
+"GET /signup/ HTTP/1.1" 200 3436
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15201
+"GET /tasks/eliminar_directivo/ HTTP/1.1" 200 4551
+"GET /tasks/eliminar_operativo/ HTTP/1.1" 200 15201
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344
+"GET /signin/ HTTP/1.1" 200 1926
+"POST /signin/ HTTP/1.1" 200 1960
+"POST /signin/ HTTP/1.1" 302 0
+"GET /usuarios/menu/ HTTP/1.1" 200 1095
+"GET /logout/ HTTP/1.1" 302 0
+"GET / HTTP/1.1" 200 1344

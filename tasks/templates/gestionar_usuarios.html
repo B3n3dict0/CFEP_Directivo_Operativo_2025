@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Gestión de Usuarios</h1>
+<p>Total de usuarios: {{ usuarios|length }}</p>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre de usuario</th>
+      <th>Email</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in usuarios %}
+    <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <a href="{% url 'editar_usuario' user.id %}" class="btn btn-sm btn-primary">Editar</a>
+        <a href="{% url 'eliminar_usuario' user.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que quieres eliminar este usuario?');">Eliminar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
